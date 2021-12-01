@@ -1,1 +1,25 @@
-<mxfile host="Electron" modified="2021-11-28T08:38:10.055Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/15.7.3 Chrome/91.0.4472.164 Electron/13.6.1 Safari/537.36" etag="WILGyoqYTET4BSJ8KI_Z" version="15.7.3" type="device"><diagram id="Wk4zZQ7wnkKNB9seRDtu" name="第 1 页">zVVNj5swEP01c1wJTALmCCnbVmp6yUo9u+AFusamxvnqr+8YDISyG3WlHnpJxm9mPJ43zwaCXXP5qFlb7VXBBRCvuEDwAQjxiRfjn0WuAxJttgNQ6rpwQTNwqH9xB3oOPdYF7xaBRilh6nYJ5kpKnpsFxrRW52XYsxLLqi0r+Qo45Eys0W91YaoBpSSa8U+8Lquxsh+6hhs2BrtOuooV6nwDBRkEO62UGazmsuPCkjfyMuQ9vuGdDqa5NH+TQKuWxz+fnlP68PVz8sLCbs8eAnc2cx0b5gX275ZKm0qVSjKRzWiq1VEW3O7q4WqO+aJUi6CP4A9uzNUNkx2NQqgyjXDeoaYt9GYrDurUUef8zvlHSTBdcnMnjkyEo1K5arjRV8zTXDBTn5bnYE4y5RQ3s4qGI/YdJJNh3xMTR1cJsg2kFNIUMvx9hNizRuID3UEWQer3rgCoN7oIJClsvEOra1mmKJqkbUWd4+mVhCyENICE9pERJIHdJE6Abla7+X1w1CNboAkk3ivpJBTIZtq1TKJdWhuLZ5J9F/xJM9mx3BbeM4n6b+zUXAbys0j6U12zdqwQzlVt+KFl/YjP+IAsddIZrV6ma0em/U5cG365r531rF0Cde+Pe49I7K7neb7dZOuw6vZmj/f4n8vDX8ljnvJr00Lp4GgnxLczTjJnYDs0tK44thP9//j3R3LdAPxgPYCJ69sBhO/nH5fz+9r7br5SQfYb</diagram></mxfile>
+<mxfile host="65bd71144e">
+    <diagram id="Wk4zZQ7wnkKNB9seRDtu" name="第 1 页">
+        <mxGraphModel dx="861" dy="670" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="8hpe9qTfB8-NIAka6sMa-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="8hpe9qTfB8-NIAka6sMa-1" target="8hpe9qTfB8-NIAka6sMa-2" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeWidth=2;dashed=1;" parent="1" source="8hpe9qTfB8-NIAka6sMa-2" target="2" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="8hpe9qTfB8-NIAka6sMa-2" value="主运行类【被@SpringBootApplication注解的类】添加注解&lt;span&gt;@EnableTransactionManagement&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="85" y="290" width="250" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="8hpe9qTfB8-NIAka6sMa-1" value="SpringBoot添加事务管理器" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="150" y="130" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="2" value="&lt;span&gt;@EnableTransactionManagement作用：注册事务管理器到Spring容器当中&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="590" y="100" width="190" height="60" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
