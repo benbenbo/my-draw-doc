@@ -1,0 +1,63 @@
+# 测试账号：
+15232656951/15232656951 [id][1892]
+
+# 查询账号sql
+## 查账号
+select * from db_pay.ts_user where phone = '15232656951'
+## 查公司
+select ts.* from db_pay.ts_user tu inner join db_pay.ts_supplier ts on tu.company_id = ts.id where tu.phone = '15232656951'
+
+
+# 查询发票可勾选入库批次数据
+select
+	tpod.*
+from
+	db_pay.ts_purchased_order tpo
+inner join db_pay.ts_purchased_order_detail tpod on
+	tpo.ysb_provider_id = tpod.ysb_provider_id
+	and tpo.in_warehouse_no = tpod.in_warehouse_no
+INNER JOIN db_pay.ts_provider tp ON tp.ysb_provider_id = tpo.ysb_provider_id
+INNER JOIN db_data_center.ts_basic_product tbp on tpod.ly_product_code=tbp.product_code
+INNER JOIN db_pay.ts_user_product tup on tpod.ly_product_code = tup.ly_product_code and
+            tpod.prov_drug_code=tup.prov_drug_code and tpod.biz_type = tup.biz_type
+left join db_pay.ts_invoice_bactchno_blacklist tibb on
+	tibb.ysb_provider_id = tpod.ysb_provider_id
+	and tibb.batch_no = tpod.batch_no  and tpod.biz_type = tup.biz_type
+where
+	tpod.usc_code = '91140000113780824N'
+	and (tpod.purchase_amount-tpod.bill_num)>0
+	and tup.uid=1892
+	and tibb.id is null;
+
+# 查询当前账号绑定品种
+select tup.* from db_pay.ts_user_product tup inner join db_pay.ts_user tu on tup.uid = tu.id where tu.phone ='15232656951'
+
+
+# 造绑定数据（先找入库批次数据，找不到入库批次要先造入库批次）
+insert
+	into
+	db_pay.ts_user_product (uid,
+	ly_product_code,
+	create_time,
+	create_user,
+	update_time,
+	update_user,
+	biz_type,
+	ysb_provider_id,
+	prov_drug_code)
+values
+	 (1892,
+'SP0025570',
+'2021-06-25 19:05:43',
+1892,
+'2021-06-25 19:05:43',
+1892,
+2,
+781,
+'SP0025570');
+
+
+
+
+
+

@@ -1,0 +1,19 @@
+# 修改角色类型
+select * from db_data_center.ts_user where uname='郑炳元';
+#update db_data_center.ts_user set client_id = 1 where uname='郑炳元';
+update db_data_center.ts_user set role_id = 34 where uname='郑炳元';
+#update db_data_center.ts_user set role_id = 32 where uname='郑炳元';
+#update db_data_center.ts_user set role_id = 13 where uname='郑炳元';
+
+
+# 可随便使用的供应商
+id=19497
+
+# 根据供应商编码查供应商
+select * from db_data_center.ts_supplier where supplier_code = 'GYS007474';
+
+# 根据供应商id+子公司id查采购信息
+select * from db_data_center.ts_supplier_salesperson tss where supplier_id =20089 and ysb_provider_id =2758;
+
+# 根据供应商id查供应商审批记录
+select * from db_data_center.ts_supplier_review tsr where tsr.supplier_id =20089

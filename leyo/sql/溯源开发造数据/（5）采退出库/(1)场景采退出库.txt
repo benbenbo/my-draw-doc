@@ -1,0 +1,233 @@
+#删除finished和retry：
+delete from `db_trace_erp`.`ts_task_finished` where source_id in (559876,2325150);
+delete from `db_trace_erp`.`ts_task_retry` where source_id in (559876,2325150);
+#准备retry
+INSERT INTO `db_trace_erp`.`ts_task_retry`(`table_name`, `source_id`) VALUES ('db_erp.ts_purinmt', 559876);
+INSERT INTO `db_trace_erp`.`ts_task_retry`(`table_name`, `source_id`) VALUES ('db_erp.ts_purinmt', 2325150);
+
+397051 供应商采退
+559876 子公司采退，包含溯源批次和非溯源批次
+2325150 子公司采退，观察发生了采退之后的数量有没有减对
+
+
+！！！判断数据是非溯源批次还是溯源批次
+SELECT
+	po.id,
+	pd.id,
+	pd.providerId,
+	pd.AngleId,
+	pd.Num,
+CASE WHEN hb.id is NULL THEN '否' ELSE '是' 
+	END '是否是历史批次',
+CASE WHEN bs.id is NULL THEN '否' ELSE '是'
+	END '上游是否是子公司'
+FROM
+	db_erp.ts_purinmt po
+	INNER JOIN db_erp.ts_purindt pd ON po.BillNo = pd.BillNo 
+	AND po.providerId = pd.providerId
+	LEFT JOIN db_trace_erp.ts_history_batch_no hb ON pd.providerId = hb.ysb_provider_id 
+	AND pd.AngleId = hb.batch_no 
+	LEFT JOIN db_erp.ts_businessdoc bs on po.SuppliersId = bs.BusinessId
+	INNER JOIN db_admin.ts_provider_auth pa on bs.taxNo = pa.taxNo
+WHERE
+	po.id in (559876,2325150);
+
+
+
+
+！！！为了覆盖所有的场景，需要添加一个溯源批次的采购单
+559876:非溯源批次
+基于498	PRK2104002484_005 构造采退单，复制559876的这一条就行
+
+
+-------------------
+#方便查复制数据ts_purinmt
+SELECT
+	po.`BillNo`,
+	po.`BillCode`,
+	po.`RuleId`,
+	po.`SuppliersId`,
+	po.`OlderNo`,
+	po.`note1`,
+	po.`providerId`
+FROM
+	db_erp.ts_purinmt po
+	INNER JOIN db_erp.ts_purindt pd ON po.BillNo = pd.BillNo 
+	AND po.providerId = pd.providerId 
+WHERE po.id in (559876)
+
+
+--------------------
+#方便查复制数据ts_purindt
+
+SELECT
+	pd.BillNo,
+	pd.BillSn,
+	pd.GoodsId,
+	pd.`AngleId`,
+	pd.`Num`,
+	pd.RfBillNo,
+	pd.RfBillSn,
+	pd.ReBillNo,
+	pd.ReBillSn,
+	pd.RfBillCode,
+	pd.ReBillCode,
+	pd.RfRuleId,
+	pd.ReRuleId
+FROM
+	db_erp.ts_purinmt po
+	INNER JOIN db_erp.ts_purindt pd ON po.BillNo = pd.BillNo 
+	AND po.providerId = pd.providerId 
+WHERE po.id in (559876)
+
+
+----------------------
+#插入语句：
+INSERT INTO db_erp.ts_purinmt ( `BillNo`, `BillCode`, `RuleId`, `SuppliersId`, `OlderNo`, `note1`, `providerId` )
+VALUES
+	( 2094224, 'PTC2105000018', '2ajc0ikub06h2dbl', 'G0000000470', 'SKP2104003760', 'PO000001035900', '498' );
+	
+mtid = 2325150
+
+
+INSERT INTO `db_erp`.`ts_purindt` ( `BillNo`, 
+`BillSn`, 
+`GoodsId`, 
+`AngleId`, 
+`Num`, 
+`RfBillNo`, 
+`RfBillSn`, 
+`ReBillNo`, 
+`ReBillSn`, 
+`RfBillCode`, 
+`ReBillCode`, 
+`RfRuleId`, 
+`ReRuleId`,
+`providerId` )
+VALUES
+	(
+	2094224,
+	1,
+	'G30GO4AKDRM',
+	'PRK2104002484_004',
+	-600,
+	2092820,
+	2,
+	2064275,
+	4,
+	'PTP2105000021',
+	'PRK2104002484',
+	'03azykbyb256xp0x',
+	'12ealvx84t7bl04x',
+	'498' 
+	);
+
+dtId=3444255
+
+
+
+
+
+
+#检查数据结果ts_history_inside_return
+SELECT
+	hir.*
+FROM
+	db_erp.ts_purinmt po
+	INNER JOIN db_erp.ts_purindt pd ON po.BillNo = pd.BillNo 
+	AND po.providerId = pd.providerId 
+    INNER JOIN db_trace_erp.ts_history_inside_return_detail hird on hird.source_id = pd.id and hird.source_type =1
+    INNER JOIN db_trace_erp.ts_history_inside_return hir on hir.id = hird.history_inside_return_id
+WHERE
+	po.id in (559876,2325150);
+
+
+#检查数据结果ts_trace_purchase
+SELECT
+	ttp.*
+FROM
+	db_erp.ts_purinmt po
+	INNER JOIN db_erp.ts_purindt pd ON po.BillNo = pd.BillNo 
+	AND po.providerId = pd.providerId 
+    INNER JOIN db_trace_erp.ts_trace_purchase ttp on ttp.source_id = pd.id and pd.source_type =2
+WHERE
+	po.id in (559876,2325150);
+
+#检查数据结果ts_allcation_purchase
+SELECT
+	pd.AngleId,
+    pd.providerId,
+    pd.Num,
+    ap.batch_no,
+    ap.ysb_provider_id,
+    ap.original_batch_no,
+    ap.original_ysb_provider_id,
+    ap.parent_ysb_provider_id,
+    ap.parent_batch_no,
+    ap.num,
+    ap.free_num,
+    ap.pms_no,
+    po.note1
+FROM
+	db_erp.ts_purinmt po
+	INNER JOIN db_erp.ts_purindt pd ON po.BillNo = pd.BillNo 
+	AND po.providerId = pd.providerId 
+    INNER JOIN db_trace_erp.ts_trace_purchase tp on tp.source_id = pd.id
+	INNER JOIN db_trace_erp.ts_allocation_purchase ap on ap.id = tp.allocation_purchase_id
+WHERE
+	po.id in (559876,2325150);
+
+
+
+
+#还原完成了采退之后的环境
+DELETE FROM db_trace_erp.ts_history_inside_return WHERE id in (SELECT hird.history_inside_return_id FROM db_erp.ts_purinmt po
+	INNER JOIN db_erp.ts_purindt pd ON po.BillNo = pd.BillNo 
+	AND po.providerId = pd.providerId 
+    INNER JOIN db_trace_erp.ts_history_inside_return_detail hird on hird.source_id = pd.id and hird.source_type =1
+    WHERE
+	po.id in (559876,2325150)
+    
+);
+
+
+DELETE FROM db_trace_erp.ts_history_inside_return_detail WHERE source_id in (SELECT pd.id FROM db_erp.ts_purinmt po
+	INNER JOIN db_erp.ts_purindt pd ON po.BillNo = pd.BillNo 
+	AND po.providerId = pd.providerId 
+    WHERE
+	po.id in (559876,2325150)
+    
+);
+
+delete from db_trace_erp.ts_history_batch_no_purchase where source_id in (
+SELECT
+	pd.id
+FROM
+	db_erp.ts_purinmt po
+	INNER JOIN db_erp.ts_purindt pd ON po.BillNo = pd.BillNo 
+	AND po.providerId = pd.providerId 
+WHERE
+	po.id in (559876,2325150)
+);
+
+delete from db_trace_erp.ts_trace_purchase where source_id in (
+SELECT
+	pd.id
+FROM
+	db_erp.ts_purinmt po
+	INNER JOIN db_erp.ts_purindt pd ON po.BillNo = pd.BillNo 
+	AND po.providerId = pd.providerId 
+WHERE
+	po.id in (559876,2325150)
+);
+
+
+delete from db_trace_erp.ts_allocation_purchase where pms_no in (
+	SELECT po.note1 FROM db_erp.ts_purinmt po
+	INNER JOIN db_erp.ts_purindt pd ON po.BillNo = pd.BillNo 
+	AND po.providerId = pd.providerId 
+    WHERE
+	po.id in (559876,2325150)
+);
+
+

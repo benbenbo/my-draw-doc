@@ -1,0 +1,74 @@
+提示：
+销退入库单::[id=24199542]处理失败，入库摊分明细没有足够的销售数量进行摊分!
+
+#查询原销售出库单号
+SELECT
+	sd.ReBillNo,
+	sd.providerId
+FROM
+	db_erp.`ts_saleoutmt` sm
+	INNER JOIN db_erp.`ts_saleoutdt` sd ON sm.BillNo = sd.BillNo 
+	AND sm.providerId = sd.providerId 
+WHERE
+	sm.id in (24199542)
+
+
+#查原销售出库单
+SELECT
+	sd.id,
+	sd.providerId,
+	sd.BillNo billNo,
+	sd.BillSn billSn,
+	sm.BillCode,
+	sd.ReBillNo originalSaleOutNo,
+	sd.ReBillSn originalSaleOutNoSn,
+	sd.AngleId angleId,
+	sd.Num num,
+	sd.GoodsId goodsId,
+	sd.RfBillCode rfBillCode 
+FROM
+	db_erp.`ts_saleoutmt` sm
+	INNER JOIN db_erp.`ts_saleoutdt` sd ON sm.BillNo = sd.BillNo 
+	AND sm.providerId = sd.providerId 
+WHERE
+	sd.providerId = 1520
+	AND sd.BillNo = 701183212
+
+
+#查原销售出库ts_trace_saleout
+SELECT
+	tso.*,
+	sd.BillNo,
+	sd.BillSn,
+	sd.AngleId
+FROM
+	db_erp.`ts_saleoutmt` sm
+	INNER JOIN db_erp.`ts_saleoutdt` sd ON sm.BillNo = sd.BillNo 
+	AND sm.providerId = sd.providerId 
+    INNER JOIN db_trace_erp.ts_trace_saleout tso ON tso.source_id = sd.id 
+WHERE
+	sd.providerId = 1520
+	AND sd.BillNo = 701183212
+
+
+#判断是内销还是自销,有记录就是内销，否则就是自销，跑的流程不同
+SELECT
+	* 
+FROM
+	db_erp.`ts_saleoutmt` sm
+	INNER JOIN ( SELECT bc.BusinessId FROM db_erp.ts_businessdoc bc INNER JOIN db_admin.ts_provider_auth pa ON bc.taxNo = pa.taxNo ) ta ON ta.BusinessId = sm.ClientId 
+WHERE
+	sm.id = sm.id IN ( 24199542 )
+
+
+#正常销售按照按照ts_saleoutdt【销退入库】的ReBillNo，ReBillSn，angleId去匹配原销售出库
+SELECT
+	sd.ReBillNo,
+	sd.ReBillSn,
+	sd.AngleId
+FROM
+	db_erp.`ts_saleoutmt` sm
+	INNER JOIN db_erp.`ts_saleoutdt` sd ON sm.BillNo = sd.BillNo 
+	AND sm.providerId = sd.providerId 
+WHERE
+	sm.id in (24199542)
