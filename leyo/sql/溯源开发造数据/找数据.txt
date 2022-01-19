@@ -81,3 +81,19 @@ AND tpm.providerId = 498
 AND bd.TaxNo = '914401067459551271'
 limit 10
 -----------------------------------
+
+
+
+
+ts_saleoutmt RuleId
+RuleId:
+1(4szcn61oa8b0tz79)销售
+2(1w8bnrjr7c7no0bj)销退
+3(3cc08h3z7cnkrv2q)销售退补差
+4 其他
+
+ts_purinmt RuleId:
+RuleId:
+12ealvx84t7bl04x 采购入库
+2ajc0ikub06h2dbl 采退出库
+446rh28k3sel2q6q 采购退补差
