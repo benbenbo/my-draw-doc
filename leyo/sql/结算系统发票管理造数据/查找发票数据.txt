@@ -1,0 +1,24 @@
+# 通过发票号找发票
+select * from ts_invoice where invoice_no='00495'
+
+# 通过发票id找单据明细
+select * from ts_invoice_detail where invoice_id=442
+
+# 通过入库明细id找入库明细
+select * from ts_purchased_order_detail where id=119437
+
+# 通过单据明细id找兑付返利的关联记录
+select * from ts_invoice_detail_rebate_receivable where invoice_detail_id=355
+
+# 通过返利明细id找返利明细
+select * from ts_rebate_receivable where id=325777
+
+# 通过发票id找商品明细
+select * from ts_invoice_product_info where invoice_id=442
+
+# 通过发票id找收票方式
+select * from ts_invoice_receive_way where invoice_id=442
+
+# 根据batch_no查询返利明细
+select * from ts_rebate_receivable where batch_no in ('PRK2103002134_001','PRK2103002135_002','PTC2103002135_002','PTC2103002136_003')
+

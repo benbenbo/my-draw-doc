@@ -1,0 +1,167 @@
+# 判断是否大于traceStartId
+select item_value from ts_trace_config where item_key = 'db_erp.ts_purinmt.traceStartId'
+
+
+
+
+#根据随货同行号，批号，商品编码查看可能摊分的销售出库批次
+SELECT
+	sd.id,
+	sd.RfBillCode,
+	sd.BillNo curBillNo,
+	sd.BillSn curBillSn,
+	tg.product_code,
+	sd.`AngleId`,
+	sd.`Num`,
+	bc.batchcode,
+	sd.providerId
+FROM
+	db_erp.ts_saleoutmt sm 
+	INNER JOIN db_erp.ts_saleoutdt sd on sm.BillNo = sd.BillNo and sm.providerId = sd.providerId
+	LEFT JOIN db_erp.ts_batchcode bc on sd.providerId = bc.providerId and sd.AngleId = bc.AngleId
+    LEFT JOIN db_erp.ts_goodsdoc tg on sd.providerId = tg.providerId and sd.GoodsId = tg.GoodsId
+WHERE
+	(sd.RfBillCode,bc.batchcode,tg.product_code) in (SELECT
+	po.OlderNo,
+	bc.batchcode,
+	tg.product_code
+FROM
+	db_erp.ts_purinmt po
+	INNER JOIN db_erp.ts_purindt pd ON po.BillNo = pd.BillNo and pd.providerId = po.providerId
+	LEFT JOIN db_erp.ts_batchcode bc on pd.providerId = bc.providerId and pd.AngleId = bc.AngleId
+    LEFT JOIN db_erp.ts_goodsdoc tg on pd.providerId = tg.providerId and pd.GoodsId = tg.GoodsId
+WHERE
+	po.id in (560331));
+
+
+#查看可能摊分的销售溯源明细
+SELECT
+	sd.id,
+	sd.RfBillCode,
+	sd.BillNo curBillNo,
+	sd.BillSn curBillSn,
+	tg.product_code,
+	sd.`AngleId`,
+	sd.`Num`,
+	bc.batchcode,
+	sd.providerId
+FROM
+	db_erp.ts_saleoutmt sm 
+	INNER JOIN db_erp.ts_saleoutdt sd on sm.BillNo = sd.BillNo and sm.providerId = sd.providerId
+	INNER JOIN db_trace_erp.ts_trace_saleout tso on tso.source_id = sd.id
+	LEFT JOIN db_erp.ts_batchcode bc on sd.providerId = bc.providerId and sd.AngleId = bc.AngleId
+    LEFT JOIN db_erp.ts_goodsdoc tg on sd.providerId = tg.providerId and sd.GoodsId = tg.GoodsId
+WHERE
+	(sd.RfBillCode,bc.batchcode,tg.product_code) in (SELECT
+	po.OlderNo,
+	bc.batchcode,
+	tg.product_code
+FROM
+	db_erp.ts_purinmt po
+	INNER JOIN db_erp.ts_purindt pd ON po.BillNo = pd.BillNo and pd.providerId = po.providerId
+	LEFT JOIN db_erp.ts_batchcode bc on pd.providerId = bc.providerId and pd.AngleId = bc.AngleId
+    LEFT JOIN db_erp.ts_goodsdoc tg on pd.providerId = tg.providerId and pd.GoodsId = tg.GoodsId
+WHERE
+	po.id in  (561380));
+
+
+#查看可能摊分的销售非溯源明细
+SELECT
+	sd.id,
+	sd.RfBillCode,
+	sd.BillNo curBillNo,
+	sd.BillSn curBillSn,
+	tg.product_code,
+	sd.`AngleId`,
+	sd.`Num`,
+	bc.batchcode,
+	sd.providerId
+FROM
+	db_erp.ts_saleoutmt sm 
+	INNER JOIN db_erp.ts_saleoutdt sd on sm.BillNo = sd.BillNo and sm.providerId = sd.providerId
+	INNER JOIN db_trace_erp.ts_history_batch_no_sale hbns on hbns.source_id = sd.id
+	LEFT JOIN db_erp.ts_batchcode bc on sd.providerId = bc.providerId and sd.AngleId = bc.AngleId
+    LEFT JOIN db_erp.ts_goodsdoc tg on sd.providerId = tg.providerId and sd.GoodsId = tg.GoodsId
+WHERE
+	(sd.RfBillCode,bc.batchcode,tg.product_code) in (SELECT
+	po.OlderNo,
+	bc.batchcode,
+	tg.product_code
+FROM
+	db_erp.ts_purinmt po
+	INNER JOIN db_erp.ts_purindt pd ON po.BillNo = pd.BillNo and pd.providerId = po.providerId
+	LEFT JOIN db_erp.ts_batchcode bc on pd.providerId = bc.providerId and pd.AngleId = bc.AngleId
+    LEFT JOIN db_erp.ts_goodsdoc tg on pd.providerId = tg.providerId and pd.GoodsId = tg.GoodsId
+WHERE
+	po.id in  (561380));
+
+
+#查看是否有其他入库单已经摊分
+#先查他的PO号和OlderNo
+SELECT
+	po.OlderNo,
+	po.note1
+FROM
+	db_erp.ts_purinmt po
+	INNER JOIN db_erp.ts_purindt pd ON po.BillNo = pd.BillNo and pd.providerId = po.providerId
+	LEFT JOIN db_erp.ts_batchcode bc on pd.providerId = bc.providerId and pd.AngleId = bc.AngleId
+    LEFT JOIN db_erp.ts_goodsdoc tg on pd.providerId = tg.providerId and pd.GoodsId = tg.GoodsId
+WHERE
+	po.id in  (561380);
+
+#查看所有的溯源入库明细
+SELECT
+	ttp.*,
+    po.OlderNo,
+    po.note1
+FROM
+	db_erp.ts_purinmt po
+	INNER JOIN db_erp.ts_purindt pd ON po.BillNo = pd.BillNo and pd.providerId = po.providerId
+    INNER JOIN db_trace_erp.ts_trace_purchase ttp on pd.id = ttp.source_id
+WHERE ttp.source_id in (SELECT
+	tpd.id 
+FROM
+	db_erp.ts_purinmt tpm
+	INNER JOIN db_erp.ts_purindt tpd ON tpm.BillNo = tpd.BillNo 
+	AND tpm.providerId = tpd.providerId 
+WHERE ( tpm.note1, tpm.OlderNo ) IN ( ( 'PO000000923259', 'SKP2112000013 ' ) ) 
+	AND tpm.RuleId = '12ealvx84t7bl04x'
+)
+
+
+#查看采退拒收的记录
+SELECT
+	tsprd.id,
+	tsprd.ysb_provider_id,
+	tsprd.bill_code,
+	tsprd.bill_sn,
+	tsprd.tax_no,
+	tsprd.pms_no,
+	tsprd.batch_id,
+	tsprd.batch_no,
+	tsprd.reject_type,
+	tsprd.reject_num,
+	tspr.receipt_bill_code 
+FROM
+	db_trace_erp.ts_source_purchase_reject tspr
+	INNER JOIN db_trace_erp.ts_source_purchase_reject_detail tsprd ON tspr.ysb_provider_id = tsprd.ysb_provider_id 
+	AND tspr.bill_code = tsprd.bill_code 
+WHERE
+	( tspr.pms_no, tspr.receipt_bill_code ) IN ( ( 'PO000000923259', 'SKP2112000013 ' ) ) 
+	AND tspr.reject_type IN ( '采购收货', '采购验收' )
+
+
+#判断入库单是供应商采购还是内部调拨
+SELECT * from db_erp.ts_purinmt po 
+    inner join db_erp.ts_purindt pd on po.BillNo = pd.BillNo and po.providerId = pd.providerId 
+    inner join db_erp.ts_businessdoc bc on po.SuppliersId = bc.BusinessId
+    inner join db_admin.ts_provider_auth pa on bc.taxNo = pa.taxNo
+WHERE po.id in (569911,569912)
+
+
+
+#找有没有漏处理的id
+select tp.id from db_erp.ts_purinmt tp 
+left join db_trace_erp.ts_task_retry ttr on tp.id = ttr.source_id 
+left join db_trace_erp.ts_task_finished ttf on tp.id = ttf.source_id 
+where tp.id>=2499519 and tp.id<=2531381 and ttr.id is null and ttf.id is null

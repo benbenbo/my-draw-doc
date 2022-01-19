@@ -1,0 +1,133 @@
+# 提示无法匹配到可摊分的非溯源销售明细以及溯源销售明细!
+
+# 判断是否大于traceStartId
+select item_value where item_key = 'db_erp.ts_purinmt.traceStartId'
+
+# 通过olderNo找出所有的非溯源销售明细和溯源销售明细
+SELECT
+DISTINCT
+	hbs.* ,
+    bc.batchcode,
+    tg.product_code
+FROM
+	db_erp.ts_purinmt tpm
+	INNER JOIN db_erp.ts_purindt tpd ON tpm.BillNo = tpd.BillNo 
+	AND tpm.providerId = tpd.providerId
+	INNER JOIN db_erp.ts_saleoutmt so ON tpm.note1 = so.wlbillcode and so.RuleId = '4szcn61oa8b0tz79'
+	INNER JOIN db_erp.ts_saleoutdt sd ON so.BillNo = sd.BillNo 
+	AND so.providerId = sd.providerId and sd.RfBillCode = tpm.OlderNo
+    INNER JOIN db_trace_erp.ts_history_batch_no_sale hbs on sd.id = hbs.source_id
+    LEFT JOIN db_erp.ts_batchcode bc on sd.providerId = bc.providerId and sd.AngleId = bc.AngleId
+    LEFT JOIN db_erp.ts_goodsdoc tg on sd.providerId = tg.providerId and sd.GoodsId = tg.GoodsId
+WHERE
+	tpm.id=2325111
+
+-------------
+SELECT
+DISTINCT
+	tts.*,
+    bc.batchcode,
+    tg.product_code
+FROM
+	db_erp.ts_purinmt tpm
+	INNER JOIN db_erp.ts_purindt tpd ON tpm.BillNo = tpd.BillNo 
+	AND tpm.providerId = tpd.providerId
+	INNER JOIN db_erp.ts_saleoutmt so ON tpm.note1 = so.wlbillcode and so.RuleId = '4szcn61oa8b0tz79'
+	INNER JOIN db_erp.ts_saleoutdt sd ON so.BillNo = sd.BillNo 
+	AND so.providerId = sd.providerId and sd.RfBillCode = tpm.OlderNo
+    INNER JOIN db_trace_erp.ts_trace_saleout tts on sd.id = tts.source_id
+    LEFT JOIN db_erp.ts_batchcode bc on sd.providerId = bc.providerId and sd.AngleId = bc.AngleId
+    LEFT JOIN db_erp.ts_goodsdoc tg on sd.providerId = tg.providerId and sd.GoodsId = tg.GoodsId
+WHERE
+	tpm.id=2325111
+
+
+#是否能够根据ts_purindt的olderNo，批号，商品编码匹配上非溯源销售明细和溯源销售明细的商品编码
+SELECT
+DISTINCT
+	tpd.*,
+    bc.batchcode,
+    tg.product_code
+FROM
+	db_erp.ts_purinmt tpm
+	INNER JOIN db_erp.ts_purindt tpd ON tpm.BillNo = tpd.BillNo 
+	AND tpm.providerId = tpd.providerId
+    LEFT JOIN db_erp.ts_batchcode bc on tpd.providerId = bc.providerId and tpd.AngleId = bc.AngleId
+    LEFT JOIN db_erp.ts_goodsdoc tg on tpd.providerId = tg.providerId and tpd.GoodsId = tg.GoodsId
+WHERE
+	tpm.id=2325111
+
+
+
+#进一步确认ts_purindt商品编码
+	
+SELECT * FROM db_erp.ts_goodsdoc where  (providerId,GoodsId) in ((SELECT
+DISTINCT
+	tpd.providerId,
+	tpd.GoodsId
+FROM
+	db_erp.ts_purinmt tpm
+	INNER JOIN db_erp.ts_purindt tpd ON tpm.BillNo = tpd.BillNo 
+	AND tpm.providerId = tpd.providerId
+    LEFT JOIN db_erp.ts_batchcode bc on tpd.providerId = bc.providerId and tpd.AngleId = bc.AngleId
+    LEFT JOIN db_erp.ts_goodsdoc tg on tpd.providerId = tg.providerId and tpd.GoodsId = tg.GoodsId
+WHERE
+	tpm.id=2325111))
+
+
+
+#确定ts_purinmt是什么类型
+SELECT
+DISTINCT
+	tpm.id,
+	(CASE tpm.RuleId WHEN '12ealvx84t7bl04x'  THEN '采购入库单' ELSE '采退出库单' END) AS '采购类型'
+FROM
+	db_erp.ts_purinmt tpm
+	INNER JOIN db_erp.ts_purindt tpd ON tpm.BillNo = tpd.BillNo 
+	AND tpm.providerId = tpd.providerId
+WHERE
+	tpm.id=2324999
+
+#确定是否在finished表
+select * from db_trace_erp.ts_task_finished where source_id = 2324999;
+
+
+
+#确定ts_purindt非溯源还是溯源批次
+SELECT
+	hb.id,
+    hb.ysb_provider_id,
+    hb.batch_no,
+    tpd.AngleId,
+    tpd.providerId,
+    tpd.Num,
+    CASE WHEN hb.id is NULL THEN '否' ELSE '是' 
+	END '是否是非溯源批次'
+FROM
+	db_erp.ts_purinmt tpm
+	INNER JOIN db_erp.ts_purindt tpd ON tpm.BillNo = tpd.BillNo 
+	AND tpm.providerId = tpd.providerId
+	LEFT JOIN db_trace_erp.ts_history_batch_no hb ON tpd.providerId = hb.ysb_provider_id 
+	AND tpd.AngleId = hb.batch_no
+WHERE
+	tpm.id=2324999
+
+
+#确定ts_saleoutdt非溯源还是溯源批次
+SELECT
+	hb.id,
+    hb.ysb_provider_id,
+    hb.batch_no,
+    sd.AngleId,
+    sd.providerId,
+    sd.Num,
+    CASE WHEN hb.id is NULL THEN '否' ELSE '是' 
+	END '是否是非溯源批次'
+FROM
+	db_erp.ts_saleoutmt sm
+	INNER JOIN db_erp.ts_saleoutdt sd ON sm.BillNo = sd.BillNo 
+	AND sm.providerId = sd.providerId
+	LEFT JOIN db_trace_erp.ts_history_batch_no hb ON sd.providerId = hb.ysb_provider_id 
+	AND sd.AngleId = hb.batch_no
+WHERE
+	sm.id=2324999

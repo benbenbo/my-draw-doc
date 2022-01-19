@@ -1,0 +1,121 @@
+！！！判断数据是非溯源批次还是溯源批次
+SELECT
+	pd.providerId,
+	pd.AngleId,
+CASE WHEN hb.id is NULL THEN '否' ELSE '是' 
+	END '是否是历史批次'
+FROM
+	db_erp.ts_purinmt po
+	INNER JOIN db_erp.ts_purindt pd ON po.BillNo = pd.BillNo 
+	AND po.providerId = pd.providerId
+	LEFT JOIN db_trace_erp.ts_history_batch_no hb ON pd.providerId = hb.ysb_provider_id 
+	AND pd.AngleId = hb.batch_no 
+WHERE
+	po.id = 559876
+
+操作1：仿照mtid=559876的明细造一个溯源批次的数据
+
+方便复制数据：
+SELECT
+	pd.BillNo,
+	pd.BillSn,
+	pd.GoodsId,
+	pd.`AngleId`,
+	pd.`Num`,
+	pd.RfBillNo,
+	pd.RfBillSn,
+	pd.ReBillNo,
+	pd.ReBillSn,
+	pd.RfBillCode,
+	pd.ReBillCode,
+	pd.RfRuleId,
+	pd.ReRuleId
+FROM
+	db_erp.ts_purindt pd
+WHERE pd.id in (783947)
+
+但是AngleId 要改为PRK2104002484_005
+INSERT INTO `db_erp`.`ts_purindt` ( `BillNo`, 
+`BillSn`, 
+`GoodsId`, 
+`AngleId`, 
+`Num`, 
+`RfBillNo`, 
+`RfBillSn`, 
+`ReBillNo`, 
+`ReBillSn`, 
+`RfBillCode`, 
+`ReBillCode`, 
+`RfRuleId`, 
+`ReRuleId`,
+`providerId` )
+VALUES
+	(
+	2094123,
+	3,
+	'G30GO4AKDRM',
+	'PRK2104002484_005',
+	-150,
+	2092820,
+	2,
+	2064275,
+	4,
+	'PTP2105000021',
+	'PRK2104002484',
+	'03azykbyb256xp0x',
+	'12ealvx84t7bl04x',
+	'498' 
+	);
+
+dtId = 3444265
+
+
+操作2：删除498-PRK2104002484_005的历史批次判断
+select * from db_trace_erp.ts_history_batch_no where (ysb_provider_id,batch_no) in ((498,'PRK2104002484_005'));
+
+delete from db_trace_erp.ts_history_batch_no where (ysb_provider_id,batch_no) in ((498,'PRK2104002484_005'));
+INSERT INTO `db_trace_erp`.`ts_history_batch_no`(`id`, `ysb_provider_id`, `batch_no`) VALUES (13373647, 498, 'PRK2104002484_005');
+
+
+操作3：
+目前已达成节点1，操作节点2，
+可以把原入库的ts_trace_purchase的source_id前面增加一个7，导致它们匹配不到
+被修改的数据：
+INSERT INTO `db_trace_erp`.`ts_trace_purchase`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `allocation_purchase_id`) VALUES (403, 7778123, 498, 'PRK2104002484_001', 781, 'PRK2103002336_001', 0, '', 1, 300, 'PO000001035900', 1783);
+INSERT INTO `db_trace_erp`.`ts_trace_purchase`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `allocation_purchase_id`) VALUES (404, 7778124, 498, 'PRK2104002484_002', 781, 'PRK2103007515_001', 0, '', 1, 800, 'PO000001035900', 1784);
+INSERT INTO `db_trace_erp`.`ts_trace_purchase`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `allocation_purchase_id`) VALUES (405, 7778125, 498, 'PRK2104002484_003', 781, 'L36S9882WD1', 0, '', 1, 16, 'PO000001035900', 1785);
+INSERT INTO `db_trace_erp`.`ts_trace_purchase`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `allocation_purchase_id`) VALUES (406, 7778126, 498, 'PRK2104002484_004', 781, 'PRK2101002747_002', 0, '', 1, 1200, 'PO000001035900', 1786);
+INSERT INTO `db_trace_erp`.`ts_trace_purchase`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `allocation_purchase_id`) VALUES (407, 7778127, 498, 'PRK2104002484_005', 781, 'PRK2101006254_001', 0, '', 1, 2000, 'PO000001035900', 1787);
+
+
+
+
+还原数据：
+INSERT INTO `db_trace_erp`.`ts_trace_purchase`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `allocation_purchase_id`) VALUES (403, 778123, 498, 'PRK2104002484_001', 781, 'PRK2103002336_001', 0, '', 1, 300, 'PO000001035900', 1783);
+INSERT INTO `db_trace_erp`.`ts_trace_purchase`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `allocation_purchase_id`) VALUES (404, 778124, 498, 'PRK2104002484_002', 781, 'PRK2103007515_001', 0, '', 1, 800, 'PO000001035900', 1784);
+INSERT INTO `db_trace_erp`.`ts_trace_purchase`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `allocation_purchase_id`) VALUES (405, 778125, 498, 'PRK2104002484_003', 781, 'L36S9882WD1', 0, '', 1, 16, 'PO000001035900', 1785);
+INSERT INTO `db_trace_erp`.`ts_trace_purchase`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `allocation_purchase_id`) VALUES (406, 778126, 498, 'PRK2104002484_004', 781, 'PRK2101002747_002', 0, '', 1, 1200, 'PO000001035900', 1786);
+INSERT INTO `db_trace_erp`.`ts_trace_purchase`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `allocation_purchase_id`) VALUES (407, 778127, 498, 'PRK2104002484_005', 781, 'PRK2101006254_001', 0, '', 1, 2000, 'PO000001035900', 1787);
+
+现在通过：
+SELECT
+	ttp.*
+FROM
+	db_erp.ts_purinmt po 
+	INNER JOIN db_erp.ts_purindt pd on po.BillNo = pd.BillNo and po.providerId = pd.providerId
+    INNER JOIN db_trace_erp.ts_trace_purchase ttp on pd.id = ttp.source_id
+	LEFT JOIN db_erp.ts_batchcode bc on pd.providerId = bc.providerId and pd.AngleId = bc.AngleId
+    LEFT JOIN db_erp.ts_goodsdoc tg on pd.providerId = tg.providerId and pd.GoodsId = tg.GoodsId
+WHERE
+    pd.providerId=498 and pd.BillNo = 2064275
+
+查不出任何可摊分的入库数据的。
+
+操作4：直接执行，会提示失败
+操作正常，正常加入到retry表
+还原原入库数据
+update `db_trace_erp`.`ts_trace_purchase` set source_id = 778123 where source_id = 7778123
+update `db_trace_erp`.`ts_trace_purchase` set source_id = 778124 where source_id = 7778124
+update `db_trace_erp`.`ts_trace_purchase` set source_id = 778125 where source_id = 7778125
+update `db_trace_erp`.`ts_trace_purchase` set source_id = 778126 where source_id = 7778126
+update `db_trace_erp`.`ts_trace_purchase` set source_id = 778127 where source_id = 7778127

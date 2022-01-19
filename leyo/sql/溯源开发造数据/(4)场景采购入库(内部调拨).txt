@@ -1,0 +1,537 @@
+#删除finished和retry：
+delete from `db_trace_erp`.`ts_task_finished` where source_id in (556082,2325121);
+delete from `db_trace_erp`.`ts_task_retry` where source_id in (556082,2325121);
+#准备retry
+INSERT INTO `db_trace_erp`.`ts_task_retry`(`table_name`, `source_id`) VALUES ('db_erp.ts_purinmt', 556082);
+INSERT INTO `db_trace_erp`.`ts_task_retry`(`table_name`, `source_id`) VALUES ('db_erp.ts_purinmt', 2325121);
+
+
+
+！！！覆盖traceStartId前和traceStartId后的场景,分别造一个traceStartId之后的数据
+SELECT
+	po.*
+FROM
+	db_erp.ts_purinmt po
+	INNER JOIN db_erp.ts_purindt pd ON po.BillNo = pd.BillNo 
+	AND po.providerId = pd.providerId 
+WHERE po.id in (556082,2325121)
+
+-------------------
+#方便查复制数据ts_purinmt
+SELECT
+	po.`BillNo`,
+	po.`BillCode`,
+	po.`RuleId`,
+	po.`SuppliersId`,
+	po.`OlderNo`,
+	po.`note1`,
+	po.`providerId`
+FROM
+	db_erp.ts_purinmt po
+	INNER JOIN db_erp.ts_purindt pd ON po.BillNo = pd.BillNo 
+	AND po.providerId = pd.providerId 
+WHERE po.id in (556082)
+
+
+--------------------
+#方便查复制数据ts_purindt
+
+SELECT
+	pd.BillNo,
+	pd.BillSn,
+	pd.GoodsId,
+	pd.`AngleId`,
+	pd.`Num`,
+	pd.RfBillNo,
+	pd.RfBillSn,
+	pd.ReBillNo,
+	pd.ReBillSn,
+	pd.RfBillCode,
+	pd.ReBillCode,
+	pd.RfRuleId,
+	pd.ReRuleId
+FROM
+	db_erp.ts_purinmt po
+	INNER JOIN db_erp.ts_purindt pd ON po.BillNo = pd.BillNo 
+	AND po.providerId = pd.providerId 
+WHERE po.id in (556082)
+
+
+----------------------
+#插入语句：
+INSERT INTO db_erp.ts_purinmt ( `BillNo`, `BillCode`, `RuleId`, `SuppliersId`, `OlderNo`, `note1`, `providerId` )
+VALUES
+	( 2064375, 'PRK2104002484', '12ealvx84t7bl04x', 'G0000000470', '75653', 'PO000001035900', '498' );
+
+mtid = 2325121
+
+
+INSERT INTO `db_erp`.`ts_purindt` ( `BillNo`, 
+`BillSn`, 
+`GoodsId`, 
+`AngleId`, 
+`Num`, 
+`RfBillNo`, 
+`RfBillSn`, 
+`ReBillNo`, 
+`ReBillSn`, 
+`RfBillCode`, 
+`ReBillCode`, 
+`RfRuleId`, 
+`ReRuleId`,
+`providerId` )
+VALUES
+	(
+	2064375,
+	1,
+	'G35H1YKZZ12',
+	'PRK2104002484_002',
+	70.00,
+	2060834,
+	6,
+	0,
+	0,
+	'GRKSDL00098147',
+	0,
+	'33gcok966lm9ksox',
+	'',
+	'498' 
+	);
+
+dtId=3444229
+
+INSERT INTO `db_erp`.`ts_purindt` ( `BillNo`, 
+`BillSn`, 
+`GoodsId`, 
+`AngleId`, 
+`Num`, 
+`RfBillNo`, 
+`RfBillSn`, 
+`ReBillNo`, 
+`ReBillSn`, 
+`RfBillCode`, 
+`ReBillCode`, 
+`RfRuleId`, 
+`ReRuleId`,
+`providerId` )
+VALUES
+	(
+	2064375,
+	2,
+	'G35H1YKZZ12',
+	'PRKT2104002484_002',
+	150.00,
+	2060834,
+	6,
+	0,
+	0,
+	'GRKSDL00098147',
+	0,
+	'33gcok966lm9ksox',
+	'',
+	'498' 
+	);
+	
+	dtId = 3444276
+	
+	INSERT INTO `db_erp`.`ts_purindt` ( `BillNo`, 
+`BillSn`, 
+`GoodsId`, 
+`AngleId`, 
+`Num`, 
+`RfBillNo`, 
+`RfBillSn`, 
+`ReBillNo`, 
+`ReBillSn`, 
+`RfBillCode`, 
+`ReBillCode`, 
+`RfRuleId`, 
+`ReRuleId`,
+`providerId` )
+VALUES
+	(
+	2064375,
+	3,
+	'G35H1YKZZ12',
+	'PRKT2104002484_003',
+	400.00,
+	2060834,
+	6,
+	0,
+	0,
+	'GRKSDL00098147',
+	0,
+	'33gcok966lm9ksox',
+	'',
+	'498' 
+	);
+	
+	dtId = 3444277
+	
+	SELECT MAX(id) from db_erp.ts_purindt
+	
+	INSERT INTO `db_erp`.`ts_purindt` ( `BillNo`, 
+`BillSn`, 
+`GoodsId`, 
+`AngleId`, 
+`Num`, 
+`RfBillNo`, 
+`RfBillSn`, 
+`ReBillNo`, 
+`ReBillSn`, 
+`RfBillCode`, 
+`ReBillCode`, 
+`RfRuleId`, 
+`ReRuleId`,
+`providerId` )
+VALUES
+	(
+	2064375,
+	4,
+	'G35H1YKZZ12',
+	'PRKT2104002484_004',
+	8.00,
+	2060834,
+	6,
+	0,
+	0,
+	'GRKSDL00098147',
+	0,
+	'33gcok966lm9ksox',
+	'',
+	'498' 
+	);
+	
+	dtId = 3444278
+	
+	INSERT INTO `db_erp`.`ts_purindt` ( `BillNo`, 
+`BillSn`, 
+`GoodsId`, 
+`AngleId`, 
+`Num`, 
+`RfBillNo`, 
+`RfBillSn`, 
+`ReBillNo`, 
+`ReBillSn`, 
+`RfBillCode`, 
+`ReBillCode`, 
+`RfRuleId`, 
+`ReRuleId`,
+`providerId` )
+VALUES
+	(
+	2064375,
+	5,
+	'G35H1YKZZ12',
+	'PRKT2104002484_005',
+	600.00,
+	2060834,
+	6,
+	0,
+	0,
+	'GRKSDL00098147',
+	0,
+	'33gcok966lm9ksox',
+	'',
+	'498' 
+	);
+	
+	dtId = 3444279
+	
+	INSERT INTO `db_erp`.`ts_purindt` ( `BillNo`, 
+`BillSn`, 
+`GoodsId`, 
+`AngleId`, 
+`Num`, 
+`RfBillNo`, 
+`RfBillSn`, 
+`ReBillNo`, 
+`ReBillSn`, 
+`RfBillCode`, 
+`ReBillCode`, 
+`RfRuleId`, 
+`ReRuleId`,
+`providerId` )
+VALUES
+	(
+	2064375,
+	6,
+	'G35H1YKZZ12',
+	'PRKT2104002484_006',
+	1000.00,
+	2060834,
+	6,
+	0,
+	0,
+	'GRKSDL00098147',
+	0,
+	'33gcok966lm9ksox',
+	'',
+	'498' 
+	);
+	
+	dtId = 3444280
+
+
+
+
+！！！覆盖所有的摊分场景：摊分非溯源批次，溯源批次，使用原单进行摊分
+上一步已经实现使用原单进行摊分和不使用原单进行摊分【使用traceStartId进行】
+因此这一步实现非溯源批次，溯源批次的摊分场景，需要把非溯源的批次的可摊分数量设置小一点【目前300】
+
+
+
+！！！查看入库记录按照随货同行单号，批号，商品编码分别可以摊到哪条销售出库明细中
+# 仅查看当前所有入库批次的随货同行单号，批号，商品编码
+SELECT
+	po.id,
+	po.OlderNo,
+	pd.BillNo curBillNo,
+	pd.BillSn curBillSn,
+	tg.product_code,
+	pd.`AngleId`,
+	pd.`Num`,
+	bc.batchcode,
+	pd.providerId
+FROM
+	db_erp.ts_purinmt po
+	INNER JOIN db_erp.ts_purindt pd ON po.BillNo = pd.BillNo
+	LEFT JOIN db_erp.ts_batchcode bc on pd.providerId = bc.providerId and pd.AngleId = bc.AngleId
+    LEFT JOIN db_erp.ts_goodsdoc tg on pd.providerId = tg.providerId and pd.GoodsId = tg.GoodsId
+WHERE
+	po.id in (556082,2325121);
+
+
+#查看所有入库批次的随货同行单号，批号，商品编码
+SELECT
+	po.OlderNo,
+	bc.batchcode,
+	tg.product_code
+FROM
+	db_erp.ts_purinmt po
+	INNER JOIN db_erp.ts_purindt pd ON po.BillNo = pd.BillNo and pd.providerId = po.providerId
+	LEFT JOIN db_erp.ts_batchcode bc on pd.providerId = bc.providerId and pd.AngleId = bc.AngleId
+    LEFT JOIN db_erp.ts_goodsdoc tg on pd.providerId = tg.providerId and pd.GoodsId = tg.GoodsId
+WHERE
+	po.id in (556082,2325121)
+
+#查看可能摊分的销售出库批次
+SELECT
+	sd.id,
+	sd.RfBillCode,
+	sd.BillNo curBillNo,
+	sd.BillSn curBillSn,
+	tg.product_code,
+	sd.`AngleId`,
+	sd.`Num`,
+	bc.batchcode,
+	sd.providerId
+FROM
+	db_erp.ts_saleoutmt sm 
+	INNER JOIN db_erp.ts_saleoutdt sd on sm.BillNo = sd.BillNo and sm.providerId = sd.providerId
+	LEFT JOIN db_erp.ts_batchcode bc on sd.providerId = bc.providerId and sd.AngleId = bc.AngleId
+    LEFT JOIN db_erp.ts_goodsdoc tg on sd.providerId = tg.providerId and sd.GoodsId = tg.GoodsId
+WHERE
+	(sd.RfBillCode,bc.batchcode,tg.product_code) in (SELECT
+	po.OlderNo,
+	bc.batchcode,
+	tg.product_code
+FROM
+	db_erp.ts_purinmt po
+	INNER JOIN db_erp.ts_purindt pd ON po.BillNo = pd.BillNo and pd.providerId = po.providerId
+	LEFT JOIN db_erp.ts_batchcode bc on pd.providerId = bc.providerId and pd.AngleId = bc.AngleId
+    LEFT JOIN db_erp.ts_goodsdoc tg on pd.providerId = tg.providerId and pd.GoodsId = tg.GoodsId
+WHERE
+	po.id in (556082,2325121));
+
+#查看可能摊分的销售溯源明细
+SELECT
+	sd.id,
+	sd.RfBillCode,
+	sd.BillNo curBillNo,
+	sd.BillSn curBillSn,
+	tg.product_code,
+	sd.`AngleId`,
+	sd.`Num`,
+	bc.batchcode,
+	sd.providerId
+FROM
+	db_erp.ts_saleoutmt sm 
+	INNER JOIN db_erp.ts_saleoutdt sd on sm.BillNo = sd.BillNo and sm.providerId = sd.providerId
+	INNER JOIN db_trace_erp.ts_trace_saleout tso on tso.source_id = sd.id
+	LEFT JOIN db_erp.ts_batchcode bc on sd.providerId = bc.providerId and sd.AngleId = bc.AngleId
+    LEFT JOIN db_erp.ts_goodsdoc tg on sd.providerId = tg.providerId and sd.GoodsId = tg.GoodsId
+WHERE
+	(sd.RfBillCode,bc.batchcode,tg.product_code) in (SELECT
+	po.OlderNo,
+	bc.batchcode,
+	tg.product_code
+FROM
+	db_erp.ts_purinmt po
+	INNER JOIN db_erp.ts_purindt pd ON po.BillNo = pd.BillNo and pd.providerId = po.providerId
+	LEFT JOIN db_erp.ts_batchcode bc on pd.providerId = bc.providerId and pd.AngleId = bc.AngleId
+    LEFT JOIN db_erp.ts_goodsdoc tg on pd.providerId = tg.providerId and pd.GoodsId = tg.GoodsId
+WHERE
+	po.id in (556082,2325121));
+
+
+#查看可能摊分的销售非溯源明细
+SELECT
+	sd.id,
+	sd.RfBillCode,
+	sd.BillNo curBillNo,
+	sd.BillSn curBillSn,
+	tg.product_code,
+	sd.`AngleId`,
+	sd.`Num`,
+	bc.batchcode,
+	sd.providerId
+FROM
+	db_erp.ts_saleoutmt sm 
+	INNER JOIN db_erp.ts_saleoutdt sd on sm.BillNo = sd.BillNo and sm.providerId = sd.providerId
+	INNER JOIN db_trace_erp.ts_history_batch_no_sale hbns on hbns.source_id = sd.id
+	LEFT JOIN db_erp.ts_batchcode bc on sd.providerId = bc.providerId and sd.AngleId = bc.AngleId
+    LEFT JOIN db_erp.ts_goodsdoc tg on sd.providerId = tg.providerId and sd.GoodsId = tg.GoodsId
+WHERE
+	(sd.RfBillCode,bc.batchcode,tg.product_code) in (SELECT
+	po.OlderNo,
+	bc.batchcode,
+	tg.product_code
+FROM
+	db_erp.ts_purinmt po
+	INNER JOIN db_erp.ts_purindt pd ON po.BillNo = pd.BillNo and pd.providerId = po.providerId
+	LEFT JOIN db_erp.ts_batchcode bc on pd.providerId = bc.providerId and pd.AngleId = bc.AngleId
+    LEFT JOIN db_erp.ts_goodsdoc tg on pd.providerId = tg.providerId and pd.GoodsId = tg.GoodsId
+WHERE
+	po.id in (556082,2325121));
+
+
+>>>因为此时OlderNo和销售出库溯源的RfBillCode是对不上的，因此需要改一下OlderNo,改完后再看看
+
+
+
+操作1：点击采购入库补偿
+UPDATE `db_trace_erp`.`ts_trace_config` SET `item_value` = '556083' WHERE `item_key` = 'db_erp.ts_purinmt.traceStartId';
+
+操作2：检查结果
+SELECT
+	pd.AngleId,
+    pd.providerId,
+    pd.Num,
+    ap.batch_no,
+    ap.ysb_provider_id,
+    ap.original_batch_no,
+    ap.original_ysb_provider_id,
+    ap.parent_ysb_provider_id,
+    ap.parent_batch_no,
+    ap.num,
+    ap.free_num,
+    ap.pms_no,
+    po.note1
+FROM
+	db_erp.ts_purinmt po
+	INNER JOIN db_erp.ts_purindt pd ON po.BillNo = pd.BillNo 
+	AND po.providerId = pd.providerId 
+    INNER JOIN db_trace_erp.ts_allocation_purchase ap on ap.purindt_id = pd.id
+WHERE
+	po.id in (556082, 2325121);
+
+
+#检查数据结果ts_trace_purchase
+SELECT
+	pd.AngleId,
+    pd.providerId,
+    pd.Num,
+    tp.batch_no,
+    tp.ysb_provider_id,
+    tp.original_batch_no,
+    tp.original_ysb_provider_id,
+    tp.parent_ysb_provider_id,
+    tp.parent_batch_no,
+    tp.num,
+    tp.pms_no,
+    po.note1,
+	tp.io_type
+FROM
+	db_erp.ts_purinmt po
+	INNER JOIN db_erp.ts_purindt pd ON po.BillNo = pd.BillNo 
+	AND po.providerId = pd.providerId 
+  INNER JOIN db_trace_erp.ts_trace_purchase tp on tp.source_id = pd.id
+WHERE
+	po.id in (556082, 2325121);
+
+
+#检查ts_trace_purchase和ts_allocation_purchase的关联
+SELECT
+	pd.AngleId,
+    pd.providerId,
+    pd.Num,
+    ap.batch_no,
+    ap.ysb_provider_id,
+    ap.original_batch_no,
+    ap.original_ysb_provider_id,
+    ap.parent_ysb_provider_id,
+    ap.parent_batch_no,
+    ap.num,
+    ap.free_num,
+    ap.pms_no,
+    po.note1
+FROM
+	db_erp.ts_purinmt po
+	INNER JOIN db_erp.ts_purindt pd ON po.BillNo = pd.BillNo 
+	AND po.providerId = pd.providerId 
+    INNER JOIN db_trace_erp.ts_trace_purchase tp on tp.source_id = pd.id
+	INNER JOIN db_trace_erp.ts_allocation_purchase ap on ap.id = tp.allocation_purchase_id
+WHERE
+	po.id in (556082, 2325121);
+
+
+
+
+
+
+#清除当前采购入库完成后的数据：
+DELETE 
+FROM
+	db_trace_erp.ts_allocation_purchase ap 
+WHERE
+	ap.purindt_id IN (
+SELECT
+	pd.id 
+FROM
+	db_erp.ts_purinmt po
+	INNER JOIN db_erp.ts_purindt pd ON po.BillNo = pd.BillNo 
+	AND po.providerId = pd.providerId 
+WHERE
+	po.id in (556082, 2325121)
+	);
+
+
+DELETE 
+FROM
+	db_trace_erp.ts_trace_purchase ap 
+WHERE
+	ap.source_id IN (
+SELECT
+	pd.id 
+FROM
+	db_erp.ts_purinmt po
+	INNER JOIN db_erp.ts_purindt pd ON po.BillNo = pd.BillNo 
+	AND po.providerId = pd.providerId 
+WHERE
+	po.id in (556082, 2325121)
+	);
+
+
+#恢复执行完成后的数据：
+INSERT INTO `db_trace_erp`.`ts_trace_purchase`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `allocation_purchase_id`) VALUES (403, 778123, 498, 'PRK2104002484_001', 781, 'PRK2103002336_001', 781, 'PRK2103002336_001', 1, 300, 'PO000001035900', 1783);
+INSERT INTO `db_trace_erp`.`ts_trace_purchase`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `allocation_purchase_id`) VALUES (404, 778124, 498, 'PRK2104002484_002', 781, 'PRK2103007515_001', 0, '', 1, 800, 'PO000001035900', 1784);
+INSERT INTO `db_trace_erp`.`ts_trace_purchase`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `allocation_purchase_id`) VALUES (405, 778125, 498, 'PRK2104002484_003', 781, 'L36S9882WD1', 0, '', 1, 16, 'PO000001035900', 1785);
+INSERT INTO `db_trace_erp`.`ts_trace_purchase`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `allocation_purchase_id`) VALUES (406, 778126, 498, 'PRK2104002484_004', 781, 'PRK2101002747_002', 0, '', 1, 1200, 'PO000001035900', 1786);
+INSERT INTO `db_trace_erp`.`ts_trace_purchase`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `allocation_purchase_id`) VALUES (407, 778127, 498, 'PRK2104002484_005', 781, 'PRK2101006254_001', 781, 'PRK2101006254_001', 1, 2000, 'PO000001035900', 1787);
+INSERT INTO `db_trace_erp`.`ts_allocation_purchase`(`id`, `purindt_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `num`, `outside_sale_num`, `inside_sale_num`, `inside_return_num`, `inventory_profit_num`, `inventory_loss_num`, `report_profit_num`, `report_loss_num`, `free_num`, `pms_no`) VALUES (1783, 778123, 498, 'PRK2104002484_001', 781, 'PRK2103002336_001', 0, '0', 300, 0, 0, 0, 0, 0, 0, 0, 300, 'PO000001035900');
+INSERT INTO `db_trace_erp`.`ts_allocation_purchase`(`id`, `purindt_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `num`, `outside_sale_num`, `inside_sale_num`, `inside_return_num`, `inventory_profit_num`, `inventory_loss_num`, `report_profit_num`, `report_loss_num`, `free_num`, `pms_no`) VALUES (1784, 778124, 498, 'PRK2104002484_002', 781, 'PRK2103007515_001', 0, '0', 800, 0, 0, 0, 0, 0, 0, 0, 800, 'PO000001035900');
+INSERT INTO `db_trace_erp`.`ts_allocation_purchase`(`id`, `purindt_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `num`, `outside_sale_num`, `inside_sale_num`, `inside_return_num`, `inventory_profit_num`, `inventory_loss_num`, `report_profit_num`, `report_loss_num`, `free_num`, `pms_no`) VALUES (1785, 778125, 498, 'PRK2104002484_003', 781, 'L36S9882WD1', 0, '0', 16, 0, 0, 0, 0, 0, 0, 0, 16, 'PO000001035900');
+INSERT INTO `db_trace_erp`.`ts_allocation_purchase`(`id`, `purindt_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `num`, `outside_sale_num`, `inside_sale_num`, `inside_return_num`, `inventory_profit_num`, `inventory_loss_num`, `report_profit_num`, `report_loss_num`, `free_num`, `pms_no`) VALUES (1786, 778126, 498, 'PRK2104002484_004', 781, 'PRK2101002747_002', 0, '0', 1200, 0, 0, 0, 0, 0, 0, 0, 1200, 'PO000001035900');
+INSERT INTO `db_trace_erp`.`ts_allocation_purchase`(`id`, `purindt_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `num`, `outside_sale_num`, `inside_sale_num`, `inside_return_num`, `inventory_profit_num`, `inventory_loss_num`, `report_profit_num`, `report_loss_num`, `free_num`, `pms_no`) VALUES (1787, 778127, 498, 'PRK2104002484_005', 781, 'PRK2101006254_001', 0, '0', 2000, 0, 0, 0, 0, 0, 0, 0, 2000, 'PO000001035900');
+

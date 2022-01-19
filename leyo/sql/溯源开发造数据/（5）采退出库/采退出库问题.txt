@@ -1,0 +1,87 @@
+# 原入库数量不足摊分
+
+#查找关键信息原单号
+SELECT
+	pd.ReBillNo,
+    pd.providerId,
+	po.OlderNo,
+	po.note1
+FROM
+	db_erp.ts_purinmt po 
+	INNER JOIN db_erp.ts_purindt pd on po.BillNo = pd.BillNo and po.providerId = pd.providerId
+	LEFT JOIN db_erp.ts_batchcode bc on pd.providerId = bc.providerId and pd.AngleId = bc.AngleId
+    LEFT JOIN db_erp.ts_goodsdoc tg on pd.providerId = tg.providerId and pd.GoodsId = tg.GoodsId
+WHERE
+    po.id in (397051)
+
+
+#查找原入库的采购溯源明细
+SELECT
+	po.*
+FROM
+	db_erp.ts_purinmt po 
+	INNER JOIN db_erp.ts_purindt pd on po.BillNo = pd.BillNo and po.providerId = pd.providerId
+	LEFT JOIN db_erp.ts_batchcode bc on pd.providerId = bc.providerId and pd.AngleId = bc.AngleId
+    LEFT JOIN db_erp.ts_goodsdoc tg on pd.providerId = tg.providerId and pd.GoodsId = tg.GoodsId
+WHERE
+    pd.providerId=781 and pd.BillNo = 1902925
+
+
+#查询其他采退出库的溯源明细
+SELECT
+	ttp.*
+FROM
+	db_erp.ts_purinmt po 
+	INNER JOIN db_erp.ts_purindt pd on po.BillNo = pd.BillNo and po.providerId = pd.providerId
+    INNER JOIN db_trace_erp.ts_trace_purchase ttp on pd.id = ttp.source_id and io_type=2
+	LEFT JOIN db_erp.ts_batchcode bc on pd.providerId = bc.providerId and pd.AngleId = bc.AngleId
+    LEFT JOIN db_erp.ts_goodsdoc tg on pd.providerId = tg.providerId and pd.GoodsId = tg.GoodsId
+WHERE
+    pd.providerId=498 and pd.ReBillNo = 1902925
+
+
+#查询原入库的ts_allocation_purchase
+SELECT
+	ap.id,
+	ap.ysb_provider_id,
+	ap.batch_no,
+	ap.parent_ysb_provider_id,
+	ap.parent_batch_no,
+	ap.original_ysb_provider_id,
+	ap.original_batch_no,
+	ap.report_profit_num AS oldReportProfitNum,
+	ap.report_profit_num AS newReportProfitNum,
+	ap.inside_return_num AS oldInsideReturnNum,
+	ap.inside_return_num AS newInsideReturnNum,
+	ap.inside_return_num AS tempNewInsideReturnNum,
+	ap.report_loss_num AS oldReportLossNum,
+	ap.report_loss_num AS newReportLossNum,
+	ap.free_num AS oldFreeNum,
+	ap.free_num AS newFreeNum,
+	ap.free_num AS tempNewFreeNum,
+	ap.pms_no AS pmsNo 
+FROM
+	db_erp.ts_purinmt po 
+	INNER JOIN db_erp.ts_purindt pd on po.BillNo = pd.BillNo and po.providerId = pd.providerId
+  INNER JOIN db_trace_erp.ts_trace_purchase ttp on pd.id = ttp.source_id and io_type=1
+	INNER JOIN db_trace_erp.ts_allocation_purchase ap on ap.id = ttp.allocation_purchase_id
+	LEFT JOIN db_erp.ts_batchcode bc on pd.providerId = bc.providerId and pd.AngleId = bc.AngleId
+    LEFT JOIN db_erp.ts_goodsdoc tg on pd.providerId = tg.providerId and pd.GoodsId = tg.GoodsId
+WHERE
+    pd.providerId=498 and pd.BillNo = 2064275
+
+
+#根据PO号+原入库的OlderNo找销售溯源明细
+SELECT ttp.* from db_trace_erp.ts_trace_saleout ttp where ttp.source_id in (SELECT
+	sd.id
+FROM
+	db_erp.ts_saleoutmt sm 
+	INNER JOIN db_erp.ts_saleoutdt sd on sm.BillNo = sd.BillNo and sm.providerId = sd.providerId
+  	INNER JOIN db_trace_erp.ts_trace_saleout tts on sd.id = tts.source_id and tts.io_type=2
+where (sm.wlbillcode,sd.RfBillCode) in (('PO000001035900','SKP2104003760')))
+
+
+
+
+采退出库单[id:559876]处理失败，[purindtId:3444265]生成销退通知单时根据[pmsNo:PO000001035900][OlderNo:SKP2104003760]查询获得的销售溯源明细，
+使用原始批次[originalYsbId:0][originalBatchNo:]和当前批次[ysbId:781][batchNo:PRK2103002336_001]匹配得到的销售数量不足摊分

@@ -1,0 +1,187 @@
+采购入库（上游供应商）
+
+1.找东健-退给-上游帝豪的采退单
+SELECT
+DISTINCT
+	tpm.* 
+FROM
+	db_erp.ts_purinmt tpm
+	INNER JOIN db_erp.ts_purindt tpd ON tpm.BillNo = tpd.BillNo 
+	AND tpm.providerId = tpd.providerId
+	INNER JOIN db_erp.ts_businessdoc bd ON tpm.SuppliersId = bd.BusinessId
+	INNER JOIN db_erp.ts_saleoutmt so ON tpm.note1 = so.wlbillcode and so.RuleId = '4szcn61oa8b0tz79'
+	INNER JOIN db_erp.ts_saleoutdt sd ON so.BillNo = sd.BillNo 
+	AND so.providerId = sd.providerId 
+WHERE
+	tpm.note1 <> '' 
+	AND tpm.OlderNo <> '' 
+	AND tpm.RuleId = '2ajc0ikub06h2dbl' 
+	AND tpm.providerId = 498 
+	AND bd.TaxNo = '914401067459551271' 
+	LIMIT 10
+
+选择id = 559876 作为采退测试数据
+SELECT
+DISTINCT
+	tpm.* 
+FROM
+	db_erp.ts_purinmt tpm
+	INNER JOIN db_erp.ts_purindt tpd ON tpm.BillNo = tpd.BillNo 
+	AND tpm.providerId = tpd.providerId
+	INNER JOIN db_erp.ts_businessdoc bd ON tpm.SuppliersId = bd.BusinessId
+	INNER JOIN db_erp.ts_saleoutmt so ON tpm.note1 = so.wlbillcode and so.RuleId = '4szcn61oa8b0tz79'
+	INNER JOIN db_erp.ts_saleoutdt sd ON so.BillNo = sd.BillNo 
+	AND so.providerId = sd.providerId 
+WHERE
+	tpm.note1 <> '' 
+	AND tpm.OlderNo <> '' 
+	AND tpm.RuleId = '2ajc0ikub06h2dbl' 
+	AND tpm.providerId = 498 
+	AND bd.TaxNo = '914401067459551271' 
+    AND tpm.id=559876
+
+
+
+2.继续找属于这条id = 559876的采购入库（子公司调拨）
+采购入库单和采退出库单的PO号是相同的
+2-1.找到id = 559876 的PO号：PO000001035900
+BillNo: 2094123
+ReBillNo:2064275
+providerId:498
+
+SELECT
+	tpm.note1 PO,
+	tpm.BillNo,
+	tpd.ReBillNo,
+	tpm.providerId
+FROM
+	db_erp.ts_purinmt tpm
+	INNER JOIN db_erp.ts_purindt tpd ON tpm.BillNo = tpd.BillNo 
+	AND tpm.providerId = tpd.providerId
+	where tpm.id=559876
+	
+
+2-2 找采购入库单
+SELECT
+	DISTINCT
+	tpm.* 
+FROM
+	db_erp.ts_purinmt tpm
+	INNER JOIN db_erp.ts_purindt tpd ON tpm.BillNo = tpd.BillNo 
+	AND tpm.providerId = tpd.providerId
+	INNER  JOIN db_erp.ts_businessdoc bd ON tpm.SuppliersId = bd.BusinessId 
+WHERE tpm.note1 <> ''
+AND tpm.OlderNo <> ''
+AND tpm.providerId = 498
+AND tpm.RuleId = '12ealvx84t7bl04x'
+AND bd.TaxNo = '914401067459551271'
+AND tpm.note1= 'PO000001035900'
+AND tpm.BillNo = 2064275
+
+id = 556082
+
+3.继续找属于这条id =  556082的销售出库单
+找到id = 556082的PO号：PO000001035900（注意，整个流程的PO号都是相同的）
+OlderNo: 75653
+BillNo: 2064275
+providerId:498
+
+
+3-1 找关键信息
+SELECT
+	tpm.note1 PO,
+    tpm.OlderNo,
+	tpm.BillNo,
+	tpm.providerId
+FROM
+	db_erp.ts_purinmt tpm
+	INNER JOIN db_erp.ts_purindt tpd ON tpm.BillNo = tpd.BillNo 
+	AND tpm.providerId = tpd.providerId
+	where tpm.id=556082
+
+3-2 找销售出库单
+SELECT
+DISTINCT
+	sm.* 
+FROM
+	db_erp.ts_saleoutmt sm
+	INNER JOIN db_erp.ts_saleoutdt sd ON sm.BillNo = sd.BillNo 
+	AND sm.providerId = sd.providerId
+ 	INNER  JOIN db_erp.ts_businessdoc bd ON sm.ClientId = bd.BusinessId 
+WHERE sm.wlbillcode <> ''
+#AND sd.RfBillCode = 75653
+AND sm.providerId = 781
+AND sm.RuleId = '4szcn61oa8b0tz79'
+AND bd.TaxNo = '91440116783861906W'
+AND sm.wlbillcode= 'PO000001035900'
+
+3-3
+但是因为目前的OlderNo都对不上saleoutdt的RfBillCode，所以在找到id之后，需要改一下入库明细的OlderNo为销售明晰的RfBillCode：SKP2104003760
+SELECT
+DISTINCT
+	tpm.* 
+FROM
+	db_erp.ts_purinmt tpm
+	INNER JOIN db_erp.ts_purindt tpd ON tpm.BillNo = tpd.BillNo 
+	AND tpm.providerId = tpd.providerId
+	INNER JOIN db_erp.ts_businessdoc bd ON tpm.SuppliersId = bd.BusinessId
+	INNER JOIN db_erp.ts_saleoutmt so ON tpm.note1 = so.wlbillcode and so.RuleId = '4szcn61oa8b0tz79'
+	INNER JOIN db_erp.ts_saleoutdt sd ON so.BillNo = sd.BillNo 
+	AND so.providerId = sd.providerId 
+WHERE
+	tpm.note1 <> '' 
+	AND tpm.OlderNo <> '' 
+	AND tpm.RuleId = '2ajc0ikub06h2dbl' 
+	AND tpm.providerId = 498 
+	AND bd.TaxNo = '914401067459551271' 
+    AND tpm.id=559876
+
+3-4验证一下是否能够关联上
+SELECT
+DISTINCT
+	sm.* 
+FROM
+	db_erp.ts_saleoutmt sm
+	INNER JOIN db_erp.ts_saleoutdt sd ON sm.BillNo = sd.BillNo 
+	AND sm.providerId = sd.providerId
+ 	INNER  JOIN db_erp.ts_businessdoc bd ON sm.ClientId = bd.BusinessId 
+WHERE sm.wlbillcode <> ''
+AND sd.RfBillCode = 'SKP2104003760'
+AND sm.providerId = 781
+AND sm.RuleId = '4szcn61oa8b0tz79'
+AND bd.TaxNo = '91440116783861906W'
+AND sm.wlbillcode= 'PO000001035900'
+
+
+saleoutmtid：
+17419584
+
+
+
+
+4.找采购入库单（上游供应商采购）
+根据销售出库的公司providerId:781
+以及sd中的批次，找上游供应商采购的id
+
+SELECT
+	po.* 
+FROM
+	db_erp.ts_purinmt po
+	INNER JOIN db_erp.ts_purindt pd ON po.BillNo = pd.BillNo 
+	AND po.providerId = pd.providerId 
+WHERE
+	po.providerId = 781 
+	AND pd.AngleId IN ( 'L36S9882WD1', 'PRK2101006254_001', 'PRK2103007515_001', 'PRK2103002336_001', 'PRK2101002747_002' ) 
+	AND po.RuleId = '12ealvx84t7bl04x'
+
+id：
+400682
+424934
+428538
+437756
+443251
+
+
+致此，数据都准备好了
+
+

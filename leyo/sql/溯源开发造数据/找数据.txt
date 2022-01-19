@@ -1,0 +1,83 @@
+目前只能从采退出库找起，因为没有销退入库记录，只能自己造
+
+找东健-退给-上游帝豪的采退单-----------------------------------
+SELECT
+	tpm.* 
+FROM
+	db_erp.ts_purinmt tpm
+	INNER JOIN db_erp.ts_purindt tpd ON tpm.BillNo = tpd.BillNo 
+	AND tpm.providerId = tpd.providerId
+	INNER  JOIN db_erp.ts_businessdoc bd ON tpm.SuppliersId = bd.BusinessId 
+WHERE tpm.note1 <> ''
+AND tpm.OlderNo <> ''
+AND tpm.RuleId = '2ajc0ikub06h2dbl'
+AND tpm.providerId = 498
+AND bd.TaxNo = '914401067459551271'
+limit 10
+
+-----------------------------------
+
+#判断ts_batchcode，获取批号-----------------------------------
+select providerId,AngleId,batchcode from db_erp.ts_batchcode where (providerId,AngleId) in ((498,'L35Q7KBCI4U'))
+-----------------------------------
+
+
+
+#获取商品编码-----------------------------------
+select providerId,GoodsId,product_code from db_erp.ts_goodsdoc where (providerId,GoodsId) in ((498,'G33CP9F2SIU'))
+-----------------------------------
+
+
+#判断某一个销售单是否是自销还是内销-----------------------------------
+#存在就是内销的，不存在就是外销
+SELECT
+	sm.* 
+FROM
+	db_erp.ts_saleoutmt sm
+	INNER JOIN db_erp.ts_saleoutdt sd ON sm.BillNo = sd.BillNo 
+	AND sm.providerId = sd.providerId
+	INNER  JOIN db_erp.ts_businessdoc bd ON sm.ClientId = bd.BusinessId 
+WHERE sm.id = 28366562
+-----------------------------------
+
+
+
+
+
+#判断销售出库明细是否有入库摊分明细-----------------------------------
+SELECT
+	* 
+FROM
+	ts_allocation_purchase 
+WHERE
+	( ysb_provider_id, batch_no ) IN (
+SELECT
+	sd.providerId,
+	sd.AngleId 
+FROM
+	db_erp.ts_saleoutmt sm
+	INNER JOIN db_erp.ts_saleoutdt sd ON sm.BillNo = sd.BillNo 
+	AND sm.providerId = sd.providerId 
+WHERE
+	sm.id = 28368387 
+	)
+-----------------------------------
+
+
+
+
+#找东健-入库-上游帝豪的入库单-----------------------------------
+SELECT
+	tpm.* 
+FROM
+	db_erp.ts_purinmt tpm
+	INNER JOIN db_erp.ts_purindt tpd ON tpm.BillNo = tpd.BillNo 
+	AND tpm.providerId = tpd.providerId
+	INNER  JOIN db_erp.ts_businessdoc bd ON tpm.SuppliersId = bd.BusinessId 
+WHERE tpm.note1 <> ''
+AND tpm.OlderNo <> ''
+AND tpm.RuleId = '2ajc0ikub06h2dbl'
+AND tpm.providerId = 498
+AND bd.TaxNo = '914401067459551271'
+limit 10
+-----------------------------------

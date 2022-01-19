@@ -1,0 +1,344 @@
+销售出库
+3457766	PO000000564578
+3396892	PO000000524799
+3397715	PO000000541983
+3396900	PO000000519976
+3396009	PO000000511514
+INSERT INTO `db_trace_erp`.`ts_task_retry`(`id`, `table_name`, `source_id`) VALUES (54, 'db_erp.ts_saleoutmt', 3457766);
+INSERT INTO `db_trace_erp`.`ts_task_retry`(`id`, `table_name`, `source_id`) VALUES (55, 'db_erp.ts_saleoutmt', 3396892);
+INSERT INTO `db_trace_erp`.`ts_task_retry`(`id`, `table_name`, `source_id`) VALUES (56, 'db_erp.ts_saleoutmt', 3397715);
+INSERT INTO `db_trace_erp`.`ts_task_retry`(`id`, `table_name`, `source_id`) VALUES (53, 'db_erp.ts_saleoutmt', 3396900);
+INSERT INTO `db_trace_erp`.`ts_task_retry`(`id`, `table_name`, `source_id`) VALUES (52, 'db_erp.ts_saleoutmt', 3396009);
+
+测试历史溯源批次和非历史溯源批次时，可将下面这些批次从ts_history_batch_no去掉：
+"498-L33CM9WVN7I" 
+"498-L32ZP88MCKQ"
+"498-L357TD0MN0U"
+"498-L349Z5AOD2A"
+"498-L33M0G41WMI"
+"498-L34TMO5OGME"
+"498-L33EPGMU3NU"
+"498-L35E9QJI1LE"
+"498-L32O7G1HGUU"
+"498-L34J86M6KVA"
+"498-L3320MMT2YM"
+"498-L33X9BO0TEU"
+"498-L345D8YESVU"
+"498-L32ZP814NGM"
+"498-L33MZIZU04U"
+"498-L33004JE2TE"
+"498-L34TXZSBUCE"
+"498-L33QMLW0GHQ"
+"498-L34UQ60AG5Y"
+"498-L35EE76ZOHY"
+"498-L34X2QF3BW6"
+"498-L342601GYJ2"
+"498-L33FT80U8JU"
+
+
+
+
+
+
+采购入库：
+2324975 子公司调拨
+2324974 子公司调拨
+2324973 上游供应商采购
+2324972 上游供应商采购
+INSERT INTO `db_trace_erp`.`ts_task_retry`(`id`, `table_name`, `source_id`) VALUES (70, 'db_erp.ts_purinmt', 2324972);
+INSERT INTO `db_trace_erp`.`ts_task_retry`(`id`, `table_name`, `source_id`) VALUES (69, 'db_erp.ts_purinmt', 2324973);
+INSERT INTO `db_trace_erp`.`ts_task_retry`(`id`, `table_name`, `source_id`) VALUES (68, 'db_erp.ts_purinmt', 2324974);
+INSERT INTO `db_trace_erp`.`ts_task_retry`(`id`, `table_name`, `source_id`) VALUES (67, 'db_erp.ts_purinmt', 2324975);
+
+
+
+采退出库：
+INSERT INTO `db_trace_erp`.`ts_task_retry`(`id`, `table_name`, `source_id`) VALUES (54, 'db_erp.ts_purinmt', 354155);
+INSERT INTO `db_trace_erp`.`ts_task_retry`(`id`, `table_name`, `source_id`) VALUES (55, 'db_erp.ts_purinmt', 354809);
+INSERT INTO `db_trace_erp`.`ts_task_retry`(`id`, `table_name`, `source_id`) VALUES (56, 'db_erp.ts_purinmt', 354811);
+INSERT INTO `db_trace_erp`.`ts_task_retry`(`id`, `table_name`, `source_id`) VALUES (53, 'db_erp.ts_purinmt', 356371);
+INSERT INTO `db_trace_erp`.`ts_task_retry`(`id`, `table_name`, `source_id`) VALUES (52, 'db_erp.ts_purinmt', 392097);
+
+
+
+
+销退入库
+
+
+
+
+
+
+
+
+
+
+select DISTINCT a.id,a.note1 from ts_purinmt a 
+inner join ts_purindt c on a.BillNo = c.BillNo and a.providerId = c.providerId
+inner join ts_saleoutmt b on a.note1 = b.wlbillcode 
+inner join ts_saleoutdt d on b.BillNo = d.BillNo and b.providerId = d.providerId where note1 <> '' and c.id is not null limit 4;
+
+
+
+
+
+
+select DISTINCT  b.id,b.wlbillcode from ts_purinmt a 
+inner join ts_purindt c on a.BillNo = c.BillNo and a.providerId = c.providerId
+inner join ts_saleoutmt b on a.note1 = b.wlbillcode 
+inner join ts_saleoutdt d on b.BillNo = d.BillNo and b.providerId = d.providerId where note1 <> '' and c.id is not null and b.RuleId = '4szcn61oa8b0tz79' limit 5;
+
+select * from ts_saleoutmt tsm where id=
+
+
+
+SELECT
+ po.*,
+ so.*,
+ bd.BusinessName
+FROM
+db_erp.ts_purinmt po 
+ inner join ts_purindt pd on po.BillNo = pd.BillNo and po.providerId = pd.providerId
+ INNER  JOIN db_erp.ts_businessdoc bd ON po.SuppliersId = bd.BusinessId 
+ INNER JOIN db_erp.ts_saleoutmt so ON po.note1 = so.wlbillcode
+ inner join ts_saleoutdt sd on so.BillNo = sd.BillNo and so.providerId = sd.providerId 
+WHERE
+ bd.TaxNo = '914401067459551271'
+ AND po.note1 <> ''
+ AND bd.id is not null
+ AND sd.id is not null
+ AND po.RuleId ='2ajc0ikub06h2dbl'
+ORDER BY po.id DESC 
+LIMIT 10
+
+
+
+
+SELECT
+ po.*
+FROM
+db_erp.ts_purinmt po 
+ inner join ts_purindt pd on po.BillNo = pd.BillNo and po.providerId = pd.providerId
+ INNER  JOIN db_erp.ts_businessdoc bd ON po.SuppliersId = bd.BusinessId 
+ INNER JOIN db_erp.ts_saleoutmt so ON po.note1 = so.wlbillcode
+ inner join ts_saleoutdt sd on so.BillNo = sd.BillNo and so.providerId = sd.providerId 
+WHERE
+ bd.TaxNo = '914401067459551271'
+ AND po.note1 <> ''
+ AND bd.id is not null
+ AND sd.id is not null
+ AND po.RuleId ='2ajc0ikub06h2dbl'
+ORDER BY po.id DESC 
+LIMIT 1
+
+#id:563574
+#PO号：PO000000836540
+
+要先删除历史批次：
+498-PRK2101001363_003
+INSERT INTO `db_trace_erp`.`ts_history_batch_no`(`id`, `ysb_provider_id`, `batch_no`) VALUES (13311954, 498, 'PRK2101001363_003');
+
+
+
+-----------------
+
+SELECT
+ po.*
+FROM
+db_erp.ts_purinmt po 
+ inner join ts_purindt pd on po.BillNo = pd.BillNo and po.providerId = pd.providerId
+ INNER  JOIN db_erp.ts_businessdoc bd ON po.SuppliersId = bd.BusinessId 
+ INNER JOIN db_erp.ts_saleoutmt so ON po.note1 = so.wlbillcode
+ inner join ts_saleoutdt sd on so.BillNo = sd.BillNo and so.providerId = sd.providerId 
+WHERE
+ bd.TaxNo = '914401067459551271'
+ AND po.note1 <> ''
+ AND bd.id is not null
+ AND sd.id is not null
+ AND po.RuleId ='12ealvx84t7bl04x'
+ AND po.note1 = 'PO000000836540'
+ORDER BY po.id DESC 
+LIMIT 1
+
+
+#id:538909
+#PO号：PO000000836540
+
+--------------------------------------
+SELECT
+ so.*
+FROM
+db_erp.ts_purinmt po 
+ inner join ts_purindt pd on po.BillNo = pd.BillNo and po.providerId = pd.providerId
+ INNER  JOIN db_erp.ts_businessdoc bd ON po.SuppliersId = bd.BusinessId 
+ INNER JOIN db_erp.ts_saleoutmt so ON po.note1 = so.wlbillcode
+ inner join ts_saleoutdt sd on so.BillNo = sd.BillNo and so.providerId = sd.providerId 
+WHERE
+ bd.TaxNo = '914401067459551271'
+ AND po.note1 <> ''
+ AND bd.id is not null
+ AND sd.id is not null
+ AND so.RuleId ='4szcn61oa8b0tz79'
+ AND so.wlbillcode = 'PO000000836540'
+ORDER BY so.id DESC 
+LIMIT 1
+
+#saleoutmtId:16944753
+#PO号：PO000000836540
+
+注意：这里先去掉了batchNo = 781-"L382D2ZSI1L"
+batchNo = 781-"L39G2ISN8OL"
+不然会走历史批次的流程
+INSERT INTO `db_trace_erp`.`ts_history_batch_no`(`id`, `ysb_provider_id`, `batch_no`) VALUES (13282854, 781, 'L382D2ZSI1L');
+INSERT INTO `db_trace_erp`.`ts_history_batch_no`(`id`, `ysb_provider_id`, `batch_no`) VALUES (13308451, 781, 'L39G2ISN8OL');
+
+----------------------------
+
+SELECT
+ so.*
+FROM
+db_erp.ts_purinmt po 
+ inner join ts_purindt pd on po.BillNo = pd.BillNo and po.providerId = pd.providerId
+ INNER  JOIN db_erp.ts_businessdoc bd ON po.SuppliersId = bd.BusinessId 
+ INNER JOIN db_erp.ts_saleoutmt so ON po.note1 = so.wlbillcode
+ inner join ts_saleoutdt sd on so.BillNo = sd.BillNo and so.providerId = sd.providerId 
+WHERE
+ bd.TaxNo = '914401067459551271'
+ AND po.note1 <> ''
+ AND bd.id is not null
+ AND sd.id is not null
+ AND so.RuleId ='4szcn61oa8b0tz79'
+ AND so.wlbillcode = 'PO000000836540'
+ORDER BY so.id DESC 
+LIMIT 1
+
+select sd.* from db_erp.ts_saleoutmt so 
+ inner join ts_saleoutdt sd on so.BillNo = sd.BillNo and so.providerId = sd.providerId where so.id=16944753
+ 
+ 
+ select po.* from db_erp.ts_purinmt po 
+ inner join ts_purindt pd on po.BillNo = pd.BillNo and po.providerId = pd.providerId where po.providerId = 781 and pd.AngleId in ('L382D2ZSI1L','L39G2ISN8OL')
+ 
+# poId = 413294
+# poId = 422799
+
+
+
+
+
+
+
+起点：
+采购入库（上游供应商）->销售出库->采购入库（子公司调拨）->采退出库->销退入库
+
+
+采购入库（上游供应商）【通过】
+结果恢复：
+INSERT INTO `db_trace_erp`.`ts_allocation_purchase`(`id`, `purindt_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `num`, `outside_sale_num`, `inside_sale_num`, `inside_return_num`, `inventory_profit_num`, `inventory_loss_num`, `report_profit_num`, `report_loss_num`, `free_num`, `pms_no`) VALUES (1494, 580130, 781, 'L382D2ZSI1L', 0, '', 781, 'L382D2ZSI1L', 1997, 0, 0, 0, 0, 0, 0, 0, 1997, 'PO000000735718');
+INSERT INTO `db_trace_erp`.`ts_allocation_purchase`(`id`, `purindt_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `num`, `outside_sale_num`, `inside_sale_num`, `inside_return_num`, `inventory_profit_num`, `inventory_loss_num`, `report_profit_num`, `report_loss_num`, `free_num`, `pms_no`) VALUES (1495, 593317, 781, 'L39G2ISN8OL', 0, '', 781, 'L39G2ISN8OL', 6420, 0, 0, 0, 0, 0, 0, 0, 6420, 'PO000000831632');
+INSERT INTO `db_trace_erp`.`ts_allocation_purchase`(`id`, `purindt_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `num`, `outside_sale_num`, `inside_sale_num`, `inside_return_num`, `inventory_profit_num`, `inventory_loss_num`, `report_profit_num`, `report_loss_num`, `free_num`, `pms_no`) VALUES (1496, 593318, 781, 'L39G2ISN8LT', 0, '', 781, 'L39G2ISN8LT', 2580, 0, 0, 0, 0, 0, 0, 0, 2580, 'PO000000831632');
+
+
+INSERT INTO `db_trace_erp`.`ts_trace_purchase`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `allocation_purchase_id`) VALUES (137, 580130, 781, 'L382D2ZSI1L', 0, '', 781, 'L382D2ZSI1L', NULL, 1997, 'PO000000735718', 1494);
+INSERT INTO `db_trace_erp`.`ts_trace_purchase`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `allocation_purchase_id`) VALUES (138, 593317, 781, 'L39G2ISN8OL', 0, '', 781, 'L39G2ISN8OL', NULL, 6420, 'PO000000831632', 1495);
+INSERT INTO `db_trace_erp`.`ts_trace_purchase`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `allocation_purchase_id`) VALUES (139, 593318, 781, 'L39G2ISN8LT', 0, '', 781, 'L39G2ISN8LT', NULL, 2580, 'PO000000831632', 1496);
+
+
+销售出库【通过】
+结果恢复：
+INSERT INTO `db_trace_erp`.`ts_allocation_purchase`(`id`, `purindt_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `num`, `outside_sale_num`, `inside_sale_num`, `inside_return_num`, `inventory_profit_num`, `inventory_loss_num`, `report_profit_num`, `report_loss_num`, `free_num`, `pms_no`) VALUES (1494, 580130, 781, 'L382D2ZSI1L', 0, '', 781, 'L382D2ZSI1L', 1997, 0, 200, 0, 0, 0, 0, 0, 1797, 'PO000000735718');
+INSERT INTO `db_trace_erp`.`ts_allocation_purchase`(`id`, `purindt_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `num`, `outside_sale_num`, `inside_sale_num`, `inside_return_num`, `inventory_profit_num`, `inventory_loss_num`, `report_profit_num`, `report_loss_num`, `free_num`, `pms_no`) VALUES (1495, 593317, 781, 'L39G2ISN8OL', 0, '', 781, 'L39G2ISN8OL', 6420, 0, 6000, 0, 0, 0, 0, 0, 420, 'PO000000831632');
+INSERT INTO `db_trace_erp`.`ts_allocation_purchase`(`id`, `purindt_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `num`, `outside_sale_num`, `inside_sale_num`, `inside_return_num`, `inventory_profit_num`, `inventory_loss_num`, `report_profit_num`, `report_loss_num`, `free_num`, `pms_no`) VALUES (1496, 593318, 781, 'L39G2ISN8LT', 0, '', 781, 'L39G2ISN8LT', 2580, 0, 0, 0, 0, 0, 0, 0, 2580, 'PO000000831632');
+
+
+INSERT INTO `db_trace_erp`.`ts_trace_saleout`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `sale_type`, `allocation_purchase_id`) VALUES (77, 78074814, 781, 'L382D2ZSI1L', 0, '', 781, 'L382D2ZSI1L', 2, 200, 'PO000000836540', 1, 1494);
+INSERT INTO `db_trace_erp`.`ts_trace_saleout`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `sale_type`, `allocation_purchase_id`) VALUES (78, 78074815, 781, 'L39G2ISN8OL', 0, '', 781, 'L39G2ISN8OL', 2, 6000, 'PO000000836540', 1, 1495);
+
+
+INSERT INTO `db_trace_erp`.`ts_trace_purchase`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `allocation_purchase_id`) VALUES (137, 580130, 781, 'L382D2ZSI1L', 0, '', 781, 'L382D2ZSI1L', NULL, 1997, 'PO000000735718', 1494);
+INSERT INTO `db_trace_erp`.`ts_trace_purchase`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `allocation_purchase_id`) VALUES (138, 593317, 781, 'L39G2ISN8OL', 0, '', 781, 'L39G2ISN8OL', NULL, 6420, 'PO000000831632', 1495);
+INSERT INTO `db_trace_erp`.`ts_trace_purchase`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `allocation_purchase_id`) VALUES (139, 593318, 781, 'L39G2ISN8LT', 0, '', 781, 'L39G2ISN8LT', NULL, 2580, 'PO000000831632', 1496);
+
+
+采购入库（子公司调拨）【通过】
+INSERT INTO `db_trace_erp`.`ts_allocation_purchase`(`id`, `purindt_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `num`, `outside_sale_num`, `inside_sale_num`, `inside_return_num`, `inventory_profit_num`, `inventory_loss_num`, `report_profit_num`, `report_loss_num`, `free_num`, `pms_no`) VALUES (1494, 580130, 781, 'L382D2ZSI1L', 0, '', 781, 'L382D2ZSI1L', 1997, 0, 200, 0, 0, 0, 0, 0, 1797, 'PO000000735718');
+INSERT INTO `db_trace_erp`.`ts_allocation_purchase`(`id`, `purindt_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `num`, `outside_sale_num`, `inside_sale_num`, `inside_return_num`, `inventory_profit_num`, `inventory_loss_num`, `report_profit_num`, `report_loss_num`, `free_num`, `pms_no`) VALUES (1495, 593317, 781, 'L39G2ISN8OL', 0, '', 781, 'L39G2ISN8OL', 6420, 0, 6000, 0, 0, 0, 0, 0, 420, 'PO000000831632');
+INSERT INTO `db_trace_erp`.`ts_allocation_purchase`(`id`, `purindt_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `num`, `outside_sale_num`, `inside_sale_num`, `inside_return_num`, `inventory_profit_num`, `inventory_loss_num`, `report_profit_num`, `report_loss_num`, `free_num`, `pms_no`) VALUES (1496, 593318, 781, 'L39G2ISN8LT', 0, '', 781, 'L39G2ISN8LT', 2580, 0, 0, 0, 0, 0, 0, 0, 2580, 'PO000000831632');
+INSERT INTO `db_trace_erp`.`ts_allocation_purchase`(`id`, `purindt_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `num`, `outside_sale_num`, `inside_sale_num`, `inside_return_num`, `inventory_profit_num`, `inventory_loss_num`, `report_profit_num`, `report_loss_num`, `free_num`, `pms_no`) VALUES (1501, 753371, 498, 'PRK2101001363_001', 781, 'L382D2ZSI1L', 781, 'L382D2ZSI1L', 60, 0, 0, 0, 0, 0, 0, 0, 60, 'PO000000836540');
+INSERT INTO `db_trace_erp`.`ts_allocation_purchase`(`id`, `purindt_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `num`, `outside_sale_num`, `inside_sale_num`, `inside_return_num`, `inventory_profit_num`, `inventory_loss_num`, `report_profit_num`, `report_loss_num`, `free_num`, `pms_no`) VALUES (1502, 753372, 498, 'PRK2101001363_002', 781, 'L382D2ZSI1L', 781, 'L382D2ZSI1L', 140, 0, 0, 0, 0, 0, 0, 0, 140, 'PO000000836540');
+INSERT INTO `db_trace_erp`.`ts_allocation_purchase`(`id`, `purindt_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `num`, `outside_sale_num`, `inside_sale_num`, `inside_return_num`, `inventory_profit_num`, `inventory_loss_num`, `report_profit_num`, `report_loss_num`, `free_num`, `pms_no`) VALUES (1503, 753372, 498, 'PRK2101001363_002', 781, 'L39G2ISN8OL', 781, 'L39G2ISN8OL', 60, 0, 0, 0, 0, 0, 0, 0, 60, 'PO000000836540');
+INSERT INTO `db_trace_erp`.`ts_allocation_purchase`(`id`, `purindt_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `num`, `outside_sale_num`, `inside_sale_num`, `inside_return_num`, `inventory_profit_num`, `inventory_loss_num`, `report_profit_num`, `report_loss_num`, `free_num`, `pms_no`) VALUES (1504, 753373, 498, 'PRK2101001363_003', 781, 'L39G2ISN8OL', 781, 'L39G2ISN8OL', 5940, 0, 0, 0, 0, 0, 0, 0, 5940, 'PO000000836540');
+
+
+
+INSERT INTO `db_trace_erp`.`ts_trace_saleout`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `sale_type`, `allocation_purchase_id`) VALUES (77, 78074814, 781, 'L382D2ZSI1L', 0, '', 781, 'L382D2ZSI1L', 2, 200, 'PO000000836540', 1, 1494);
+INSERT INTO `db_trace_erp`.`ts_trace_saleout`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `sale_type`, `allocation_purchase_id`) VALUES (78, 78074815, 781, 'L39G2ISN8OL', 0, '', 781, 'L39G2ISN8OL', 2, 6000, 'PO000000836540', 1, 1495);
+
+
+
+INSERT INTO `db_trace_erp`.`ts_trace_purchase`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `allocation_purchase_id`) VALUES (137, 580130, 781, 'L382D2ZSI1L', 0, '', 781, 'L382D2ZSI1L', 1, 1997, 'PO000000735718', 1494);
+INSERT INTO `db_trace_erp`.`ts_trace_purchase`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `allocation_purchase_id`) VALUES (138, 593317, 781, 'L39G2ISN8OL', 0, '', 781, 'L39G2ISN8OL', 1, 6420, 'PO000000831632', 1495);
+INSERT INTO `db_trace_erp`.`ts_trace_purchase`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `allocation_purchase_id`) VALUES (139, 593318, 781, 'L39G2ISN8LT', 0, '', 781, 'L39G2ISN8LT', 1, 2580, 'PO000000831632', 1496);
+INSERT INTO `db_trace_erp`.`ts_trace_purchase`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `allocation_purchase_id`) VALUES (144, 753371, 498, 'PRK2101001363_001', 781, 'L382D2ZSI1L', 781, 'L382D2ZSI1L', 1, 60, 'PO000000836540', 1501);
+INSERT INTO `db_trace_erp`.`ts_trace_purchase`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `allocation_purchase_id`) VALUES (145, 753372, 498, 'PRK2101001363_002', 781, 'L382D2ZSI1L', 781, 'L382D2ZSI1L', 1, 140, 'PO000000836540', 1502);
+INSERT INTO `db_trace_erp`.`ts_trace_purchase`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `allocation_purchase_id`) VALUES (146, 753372, 498, 'PRK2101001363_002', 781, 'L39G2ISN8OL', 781, 'L39G2ISN8OL', 1, 60, 'PO000000836540', 1503);
+INSERT INTO `db_trace_erp`.`ts_trace_purchase`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `allocation_purchase_id`) VALUES (147, 753373, 498, 'PRK2101001363_003', 781, 'L39G2ISN8OL', 781, 'L39G2ISN8OL', 1, 5940, 'PO000000836540', 1504);
+
+采退出库【通过】
+INSERT INTO `db_trace_erp`.`ts_allocation_purchase`(`id`, `purindt_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `num`, `outside_sale_num`, `inside_sale_num`, `inside_return_num`, `inventory_profit_num`, `inventory_loss_num`, `report_profit_num`, `report_loss_num`, `free_num`, `pms_no`) VALUES (1494, 580130, 781, 'L382D2ZSI1L', 0, '', 781, 'L382D2ZSI1L', 1997, 0, 200, 0, 0, 0, 0, 0, 1797, 'PO000000735718');
+INSERT INTO `db_trace_erp`.`ts_allocation_purchase`(`id`, `purindt_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `num`, `outside_sale_num`, `inside_sale_num`, `inside_return_num`, `inventory_profit_num`, `inventory_loss_num`, `report_profit_num`, `report_loss_num`, `free_num`, `pms_no`) VALUES (1495, 593317, 781, 'L39G2ISN8OL', 0, '', 781, 'L39G2ISN8OL', 6420, 0, 6000, 0, 0, 0, 0, 0, 420, 'PO000000831632');
+INSERT INTO `db_trace_erp`.`ts_allocation_purchase`(`id`, `purindt_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `num`, `outside_sale_num`, `inside_sale_num`, `inside_return_num`, `inventory_profit_num`, `inventory_loss_num`, `report_profit_num`, `report_loss_num`, `free_num`, `pms_no`) VALUES (1496, 593318, 781, 'L39G2ISN8LT', 0, '', 781, 'L39G2ISN8LT', 2580, 0, 0, 0, 0, 0, 0, 0, 2580, 'PO000000831632');
+INSERT INTO `db_trace_erp`.`ts_allocation_purchase`(`id`, `purindt_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `num`, `outside_sale_num`, `inside_sale_num`, `inside_return_num`, `inventory_profit_num`, `inventory_loss_num`, `report_profit_num`, `report_loss_num`, `free_num`, `pms_no`) VALUES (1501, 753371, 498, 'PRK2101001363_001', 781, 'L382D2ZSI1L', 781, 'L382D2ZSI1L', 60, 0, 0, 0, 0, 0, 0, 0, 60, 'PO000000836540');
+INSERT INTO `db_trace_erp`.`ts_allocation_purchase`(`id`, `purindt_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `num`, `outside_sale_num`, `inside_sale_num`, `inside_return_num`, `inventory_profit_num`, `inventory_loss_num`, `report_profit_num`, `report_loss_num`, `free_num`, `pms_no`) VALUES (1502, 753372, 498, 'PRK2101001363_002', 781, 'L382D2ZSI1L', 781, 'L382D2ZSI1L', 140, 0, 0, 0, 0, 0, 0, 0, 140, 'PO000000836540');
+INSERT INTO `db_trace_erp`.`ts_allocation_purchase`(`id`, `purindt_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `num`, `outside_sale_num`, `inside_sale_num`, `inside_return_num`, `inventory_profit_num`, `inventory_loss_num`, `report_profit_num`, `report_loss_num`, `free_num`, `pms_no`) VALUES (1503, 753372, 498, 'PRK2101001363_002', 781, 'L39G2ISN8OL', 781, 'L39G2ISN8OL', 60, 0, 0, 0, 0, 0, 0, 0, 60, 'PO000000836540');
+INSERT INTO `db_trace_erp`.`ts_allocation_purchase`(`id`, `purindt_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `num`, `outside_sale_num`, `inside_sale_num`, `inside_return_num`, `inventory_profit_num`, `inventory_loss_num`, `report_profit_num`, `report_loss_num`, `free_num`, `pms_no`) VALUES (1504, 753373, 498, 'PRK2101001363_003', 781, 'L39G2ISN8OL', 781, 'L39G2ISN8OL', 5940, 0, 0, 547, 0, 0, 0, 0, 5393, 'PO000000836540');
+
+
+INSERT INTO `db_trace_erp`.`ts_trace_saleout`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `sale_type`, `allocation_purchase_id`) VALUES (77, 78074814, 781, 'L382D2ZSI1L', 0, '', 781, 'L382D2ZSI1L', 2, 200, 'PO000000836540', 1, 1494);
+INSERT INTO `db_trace_erp`.`ts_trace_saleout`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `sale_type`, `allocation_purchase_id`) VALUES (78, 78074815, 781, 'L39G2ISN8OL', 0, '', 781, 'L39G2ISN8OL', 2, 6000, 'PO000000836540', 1, 1495);
+
+
+INSERT INTO `db_trace_erp`.`ts_trace_purchase`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `allocation_purchase_id`) VALUES (137, 580130, 781, 'L382D2ZSI1L', 0, '', 781, 'L382D2ZSI1L', 1, 1997, 'PO000000735718', 1494);
+INSERT INTO `db_trace_erp`.`ts_trace_purchase`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `allocation_purchase_id`) VALUES (138, 593317, 781, 'L39G2ISN8OL', 0, '', 781, 'L39G2ISN8OL', 1, 6420, 'PO000000831632', 1495);
+INSERT INTO `db_trace_erp`.`ts_trace_purchase`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `allocation_purchase_id`) VALUES (139, 593318, 781, 'L39G2ISN8LT', 0, '', 781, 'L39G2ISN8LT', 1, 2580, 'PO000000831632', 1496);
+INSERT INTO `db_trace_erp`.`ts_trace_purchase`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `allocation_purchase_id`) VALUES (144, 753371, 498, 'PRK2101001363_001', 781, 'L382D2ZSI1L', 781, 'L382D2ZSI1L', 1, 60, 'PO000000836540', 1501);
+INSERT INTO `db_trace_erp`.`ts_trace_purchase`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `allocation_purchase_id`) VALUES (145, 753372, 498, 'PRK2101001363_002', 781, 'L382D2ZSI1L', 781, 'L382D2ZSI1L', 1, 140, 'PO000000836540', 1502);
+INSERT INTO `db_trace_erp`.`ts_trace_purchase`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `allocation_purchase_id`) VALUES (146, 753372, 498, 'PRK2101001363_002', 781, 'L39G2ISN8OL', 781, 'L39G2ISN8OL', 1, 60, 'PO000000836540', 1503);
+INSERT INTO `db_trace_erp`.`ts_trace_purchase`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `allocation_purchase_id`) VALUES (147, 753373, 498, 'PRK2101001363_003', 781, 'L39G2ISN8OL', 781, 'L39G2ISN8OL', 1, 5940, 'PO000000836540', 1504);
+INSERT INTO `db_trace_erp`.`ts_trace_purchase`(`id`, `source_id`, `ysb_provider_id`, `batch_no`, `parent_ysb_provider_id`, `parent_batch_no`, `original_ysb_provider_id`, `original_batch_no`, `io_type`, `num`, `pms_no`, `allocation_purchase_id`) VALUES (148, 789617, 498, 'PRK2101001363_003', 498, 'L39G2ISN8OL', 781, 'L39G2ISN8OL', 2, 547, 'PO000000836540', 1504);
+
+
+目前的问题是，销退通知单需要存销售明细维度的批次，原始批次，上游批次。
+1.先要查出销售明细
+OlderNo在ts_purinmt中 
+RfBillCode在ts_saleoutdt里面
+目前没有对得上的单号。完全没有
+
+通过PO+随货同行单号，找到所有的销售原表出库明细
+再根据这些ID，找到销售溯源明细。
+
+
+
+2.减去已经销退入库的数量
+在上一步已经得到了销售出库明细，因此也得到了BillNo
+通过这些BillNo作为ReBillNo+providerId查出销退入库的原表明细
+以这些明细去找到销售溯源明细。
+
+3.计算剩余数量
+针对每条销售出库的销售溯源明细，通过BillNo+BillSn+AngelId+saleType，减去已经销退入库的数量
+
+3.开始摊分采退的数量
+首先，已经存在了一系列已经摊分好的tracePurchase记录。
+然后针对每条已经计算了剩余数量的销售溯源明细遍历，通过原始批次+上游批次信息锁定可以摊分的销售溯源明细，按id正序进行摊分，生成销退通知单
+
+
+select id,OlderNo from db_erp.ts_purinmt where id=563574;
+
+select id from db_erp.ts_saleoutdt where RfBillCode='28311'
+
+
+
+select * from db_trace_erp.ts_trace_inside_return tr
+inner join db_trace_erp.ts_trace_inside_return_detail trd on
+tr.id = trd.trace_inside_return_id
+where tr.origin

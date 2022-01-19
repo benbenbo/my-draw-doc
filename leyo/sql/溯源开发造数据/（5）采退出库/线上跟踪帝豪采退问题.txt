@@ -1,0 +1,17 @@
+#查询上游是帝豪的是否有处理失败的
+select
+	po.*
+from
+	db_erp.ts_purinmt po
+inner join db_erp.ts_businessdoc tb ON
+	po.SuppliersId = tb.BusinessId
+inner join db_admin.ts_provider_auth tpa ON
+	tpa.taxNo = tb.TaxNo
+inner join db_trace_erp.ts_task_retry ttr ON po.id = ttr.source_id and ttr.table_name ='db_erp.ts_purinmt'
+where
+	tpa.providerId = 781
+	AND po.id>2499519
+	AND po.RuleId = '2ajc0ikub06h2dbl'
+
+#查询目前的游标
+select ttc.* from db_trace_erp.ts_trace_config ttc 
