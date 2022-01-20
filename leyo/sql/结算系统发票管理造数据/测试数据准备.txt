@@ -151,6 +151,88 @@ null,
 0);
 
 
+(1-3)造一条采退批次的记录
+# 造入库批次汇总记录
+insert
+	into
+	db_pay.ts_purchased_order (ysb_provider_id,
+	original_sn,
+	purchase_date,
+	purchase_time,
+	detail_number,
+	usc_code,
+	pms_po_no,
+	io_type,
+	in_warehouse_no)
+values
+	 (781,
+'0',
+20210614,
+'2021-06-14 19:36:25',
+1,
+'91440500661473294N',
+'POM000001170363',
+1,
+'PTCM2106003250');
+
+
+# 造入库批次明细记录
+insert
+	into
+	db_pay.ts_purchased_order_detail
+(pms_po_no,
+	usc_code,
+	ysb_provider_id,
+	prov_drug_code,
+	batch_id,
+	batch_no,
+	purchase_amount,
+	ly_product_code,
+	batch_p1_price,
+	including_tax_amount,
+	in_warehouse_no,
+	serial_number,
+	ctime,
+	biz_type,
+	purchase_time,
+	io_type,
+	is_gift,
+	goods_accompany_no,
+	purchaser,
+	bill_num,
+	tax_rate,
+	original_sn,
+	original_serial_number,
+	without_tax_amount,
+	tax_amount,
+	cash_cow_declare_id)
+values
+	 ('POM000001170363',
+'91440500661473294N',
+781,
+'5991692',
+'2021032502',
+'PRKM2106003250_001',
+598,
+'SP0200122',
+1.7000,
+1016.60,
+'PTCM2106003250',
+1,
+'2021-06-14 20:23:45',
+3,
+'2021-06-14 19:36:25',
+2,
+0,
+'800672',
+'李新青',
+555,
+13,
+null,
+0,
+899.65,
+116.95,
+0);
 
 
 
