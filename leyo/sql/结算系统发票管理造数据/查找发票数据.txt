@@ -22,3 +22,68 @@ select * from ts_invoice_receive_way where invoice_id=442
 # 根据batch_no查询返利明细
 select * from ts_rebate_receivable where batch_no in ('PRK2103002134_001','PRK2103002135_002','PTC2103002135_002','PTC2103002136_003')
 
+# 查询发票可勾选入库批次数据
+select
+	tpod.*
+from
+	db_pay.ts_purchased_order tpo
+inner join db_pay.ts_purchased_order_detail tpod on
+	tpo.ysb_provider_id = tpod.ysb_provider_id
+	and tpo.in_warehouse_no = tpod.in_warehouse_no
+INNER JOIN db_pay.ts_provider tp ON tp.ysb_provider_id = tpo.ysb_provider_id
+INNER JOIN db_data_center.ts_basic_product tbp on tpod.ly_product_code=tbp.product_code
+INNER JOIN db_pay.ts_user_product tup on tpod.ly_product_code = tup.ly_product_code and
+            tpod.prov_drug_code=tup.prov_drug_code and tpod.biz_type = tup.biz_type
+left join db_pay.ts_invoice_bactchno_blacklist tibb on
+	tibb.ysb_provider_id = tpod.ysb_provider_id
+	and tibb.batch_no = tpod.batch_no  and tpod.biz_type = tup.biz_type
+where
+	tpod.usc_code = '91140000113780824N'
+	and (tpod.purchase_amount-tpod.bill_num)>0
+	and tup.uid=1892
+	and tibb.id is null;
+
+# 根据明细id查询汇总表
+select
+	tpo.*
+from
+	db_pay.ts_purchased_order tpo
+inner join db_pay.ts_purchased_order_detail tpod on
+	tpo.ysb_provider_id = tpod.ysb_provider_id
+	and tpo.in_warehouse_no = tpod.in_warehouse_no
+where tpod.id = 231683
+
+# 查询账号sql
+## 查账号
+select * from db_pay.ts_user where phone = '15232656951'
+
+
+## 查公司
+select ts.* from db_pay.ts_user tu inner join db_pay.ts_supplier ts on tu.company_id = ts.id where tu.phone = '15232656951'
+
+
+
+# 查询当前账号绑定品种
+select tup.* from db_pay.ts_user_product tup inner join db_pay.ts_user tu on tup.uid = tu.id where tu.phone ='15232656951'
+
+
+# 查询子公司
+select * from db_pay.ts_provider tp
+
+#合计负利润查找
+select
+	tccwf.ysb_provider_id,
+	tp.provider_name ,
+	sum(tccwf.profit_amount) totalProfitAmount
+from
+	db_pay.ts_cash_cow_withdraw_flow tccwf
+inner join db_pay.ts_provider tp on
+	tp.ysb_provider_id = tccwf .ysb_provider_id
+where
+	tccwf.trade_type in (1, 2, 5)
+	and (tccwf.ly_product_code,
+	tccwf.prov_drug_code,
+	tccwf.ysb_provider_id) in ( ('SP0025570', 'SP0025570', 781) , ('SP0027656', 'SP0027656', 781) )
+	and tccwf.ysb_provider_id = 781
+group by
+	tccwf.ysb_provider_id;
