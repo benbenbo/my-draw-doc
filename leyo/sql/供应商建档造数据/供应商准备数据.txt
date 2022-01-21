@@ -17,3 +17,9 @@ select * from db_data_center.ts_supplier_salesperson tss where supplier_id =2008
 
 # 根据供应商id查供应商审批记录
 select * from db_data_center.ts_supplier_review tsr where tsr.supplier_id =20089
+
+# 供应商电子资质证照
+select * from db_data_center.ts_supplier_electric_qualification_certificate tseqc 
+
+# 供应商电子资质
+select * from db_data_center.ts_supplier_electric_qualification tseqc 
